@@ -1,3 +1,4 @@
+// see https://github.com/NateShoffner/M3U.NET/blob/master/M3U.NET/M3UFile.cs
 import { Injectable } from "@angular/core";
 import { M3U, M3UEntry } from "./../Models/Models";
 
