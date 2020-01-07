@@ -1,27 +1,30 @@
-import { Injectable } from '@angular/core';
-import * as M3U8FileParser from 'm3u8-file-parser';
+import { Injectable } from "@angular/core";
+import { M3U, M3UEntry } from "./../Models/Models";
 
 export class M3uService {
-    /**
-     * m3u8 parser
-     */
-    m3u8FileParser = new M3U8FileParser();
+  private EXTM3U = "#EXTM3U";
+  private EXTINF = "#EXTINF";
+  private EXTALB = "#EXTALB";
+  private EXTART = "#EXTART";
 
-    /**
-     * Converts string based array to playlist object
-     * @param m3uArray m3u playlist as array with strings
-     */
-    convertArrayToPlaylist(m3uArray: any[]): any {
-        this.m3u8FileParser.read(m3uArray.join('\n'));
-        return this.m3u8FileParser.getResult();
-    }
+  parse(content: string): M3U {
+    const m3u = new M3U();
 
-    /**
-     * Converts string to playlist structure
-     * @param m3uString playlist as string
-     */
-    convertStringToPlaylist(m3uString: string): any {
-        this.m3u8FileParser.read(m3uString);
-        return this.m3u8FileParser.getResult();
-    }
+    const lines = content.trim().split("\n");
+
+    lines.forEach((line, index) => {
+      if (line !== this.EXTM3U) {
+        // maybe a invalid file?
+       // return;
+      }
+      if (line.startsWith(this.EXTINF)) {
+        m3u.entries.push(new M3UEntry({ src: lines[index + 1] }));
+        //return;
+      } else {
+        // maybe the url? if true, it will be handled at the previous line.
+      }
+    });
+
+    return m3u;
+  }
 }

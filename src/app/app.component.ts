@@ -15,8 +15,9 @@ export class AppComponent {
       FileHandler.read(file, FileAs.text).then(x => {
         // here comes the m3u reader whats currently missing
         const m3u = new M3uService();
-        this.data = m3u.convertStringToPlaylist(x.toString());
+        this.data = m3u.parse(x.toString());
         console.log(this.data);
+        console.log(this.data.length);
       });
     }
   }
