@@ -12,10 +12,14 @@ export class M3U {
 export class M3UEntry {
   constructor(value?: Partial<M3UEntry>) {
     this.src = '';
+    this.title = '';
+    this.duration = 0;
     if (value) {
       Object.assign(this, value);
     }
   }
 
   src: string;
+  title: string;
+  duration: number;
 }
