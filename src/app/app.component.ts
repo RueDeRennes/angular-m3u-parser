@@ -16,8 +16,8 @@ export class AppComponent {
       const content = await FileHandler.read(file, FileAs.text);
       const data = await M3uService.parse2(content.toString());
 
-      console.table(this.data);
-      console.log(this.data.length);
+      console.table(data);
+      console.log(data.length);
     }
   }
 
