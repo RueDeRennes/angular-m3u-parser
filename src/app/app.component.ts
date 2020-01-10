@@ -9,16 +9,15 @@ import { M3uService } from "./Services/M3uService";
 })
 export class AppComponent {
 
-  upload(files: FileList) {
+  async upload(files: FileList) {
     if (files && files.length) {
       const [file] = files;
-      FileHandler.read(file, FileAs.text).then(x => {
-        // here comes the m3u reader whats currently missing
-        const m3u = new M3uService();
-        this.data = m3u.parse(x.toString());
-        console.log(this.data);
-        console.log(this.data.length);
-      });
+
+      const content = await FileHandler.read(file, FileAs.text);
+      const data = await M3uService.parse2(content);
+
+      console.log(this.data);
+      console.log(this.data.length);
     }
   }
 

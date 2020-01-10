@@ -23,3 +23,14 @@ export class M3UEntry {
   title: string;
   duration: number;
 }
+
+
+export class M3UEntryAttribute {
+	constructor(value?: Partial<M3UEntryAttribute>) {
+		if (value) {
+			Object.assign(this, value);
+		}
+	}
+
+	[key: string]: string;
+}
