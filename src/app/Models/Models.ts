@@ -14,6 +14,7 @@ export class M3UEntry {
     this.src = '';
     this.title = '';
     this.duration = 0;
+    this.attributes = [];
     if (value) {
       Object.assign(this, value);
     }
@@ -22,6 +23,7 @@ export class M3UEntry {
   src: string;
   title: string;
   duration: number;
+  attributes: Array<M3UEntryAttribute>
 }
 
 
