@@ -1,5 +1,3 @@
 <input type="file" (change)="upload($event.target.files, resultPanel)">
 
-<div>
-  <span>{{data| json}}</span>
-</div>
+<app-data-table-view [dataSource]=this.data></app-data-table-view>
