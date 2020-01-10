@@ -9,14 +9,17 @@ import { M3uService } from "./Services/M3uService";
 })
 export class AppComponent {
 
-  public data: any;
+  public data: [];
 
-  async upload(files: FileList) {
+  upload(files: FileList) {
     if (files && files.length) {
       const [file] = files;
 
-      const content = await FileHandler.read(file, FileAs.text);
-      this.data = await M3uService.parse2(content.toString());
+      FileHandler.read(file, FileAs.text).then((content) => {
+        M3uService.parse2(content.toString()).then((data) => {
+          this.data = data.entries;
+        });
+      });
     }
   }
 
