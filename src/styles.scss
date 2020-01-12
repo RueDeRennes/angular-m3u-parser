@@ -11,6 +11,10 @@
 @include _font-style('https://fonts.googleapis.com/css?family=Open+Sans:400,500,700,900&display=swap', "'Open Sans'", "sans-serif");
 @include _font-style('https://fonts.googleapis.com/icon?family=Material+Icons', "'Material Icons'", '', 'material-icons');
 
+@include flex-style();
+@include margin-style();
+
 @include body-style('', true);
 @include html-style('', true);
 @include table-style('default', false);
+@include input-style('default', false);

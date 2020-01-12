@@ -4,7 +4,8 @@ import {
   ContentChildren,
   QueryList,
   forwardRef,
-  Input
+  Input,
+  AfterViewInit
 } from "@angular/core";
 import { MatIconRegistry } from "@angular/material/icon";
 import { DomSanitizer } from "@angular/platform-browser";
@@ -17,8 +18,7 @@ import {
 import { MatTable } from "@angular/material/table";
 import { M3UEntry } from "../../Models/Models";
 import { MatSort } from "@angular/material/sort";
-import {MatTableDataSource} from '@angular/material/table';
-
+import { MatTableDataSource } from "@angular/material/table";
 
 @Component({
   selector: "app-data-table-view",
@@ -36,12 +36,15 @@ export class DataTableViewComponent {
 
   dataSource: MatTableDataSource<any>;
 
-  ngOnInit(): void {
+  setDataSource(data: Array<any>): void {
+    this.dataSource = new MatTableDataSource(data);
     this.dataSource.sort = this.sort;
   }
 
-  setDataSource(data: Array<any>): void {
-    this.dataSource = new MatTableDataSource(data);
+  applyFilter(filterValue: string) {
+    setTimeout(() => {
+      this.dataSource.filter = filterValue.trim().toLowerCase()
+    }, 200)
   }
 
   // dropTable(event: CdkDragDrop<Array<M3UEntry>>) {
