@@ -39,6 +39,12 @@ export class DataTableViewComponent {
   setDataSource(data: Array<any>): void {
     this.dataSource = new MatTableDataSource(data);
     this.dataSource.sort = this.sort;
+    this.dataSource.sortingDataAccessor = (data: object, sortHeaderId: string): string | number => {
+      const propPath = sortHeaderId.split('.');
+      const value: any = propPath
+        .reduce((curObj, property) => curObj[property], data);
+      return !isNaN(value) ? Number(value) : value;
+    };
   }
 
   applyFilter(filterValue: string) {
@@ -47,9 +53,9 @@ export class DataTableViewComponent {
     }, 200)
   }
 
-  // dropTable(event: CdkDragDrop<Array<M3UEntry>>) {
-  //   const prevIndex = this.dataSource.findIndex(d => d === event.item.data);
-  //   moveItemInArray(this.dataSource, prevIndex, event.currentIndex);
-  //   this.table.renderRows();
-  // }
+  dropTable(event: CdkDragDrop<Array<M3UEntry>>) {
+    const prevIndex = this.dataSource.data.findIndex(d => d === event.item.data);
+    moveItemInArray(this.dataSource.data, prevIndex, event.currentIndex);
+    this.table.renderRows();
+  }
 }
