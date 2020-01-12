@@ -19,6 +19,7 @@ import { MatTable } from "@angular/material/table";
 import { M3UEntry } from "../../Models/Models";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
+import {SelectionModel} from '@angular/cdk/collections';
 
 @Component({
   selector: "app-data-table-view",
@@ -32,30 +33,53 @@ export class DataTableViewComponent {
   @ViewChild(MatSort, { static: true })
   sort: MatSort;
 
-  dataSourceColumns: string[] = ["title", "src", "attributes"];
+  dataSourceColumns: string[] = ['select',"title", "src", "attributes"];
 
-  dataSource: MatTableDataSource<any>;
+  dataSource: MatTableDataSource<M3UEntry>;
+
+   selection = new SelectionModel<M3UEntry>(true, []);
 
   setDataSource(data: Array<any>): void {
     this.dataSource = new MatTableDataSource(data);
     this.dataSource.sort = this.sort;
-    this.dataSource.sortingDataAccessor = (data: object, sortHeaderId: string): string | number => {
-      const propPath = sortHeaderId.split('.');
-      const value: any = propPath
-        .reduce((curObj, property) => curObj[property], data);
+    this.dataSource.sortingDataAccessor = (
+      data: object,
+      sortHeaderId: string
+    ): string | number => {
+      const propPath = sortHeaderId.split(".");
+      const value: any = propPath.reduce(
+        (curObj, property) => curObj[property],
+        data
+      );
       return !isNaN(value) ? Number(value) : value;
     };
   }
 
   applyFilter(filterValue: string) {
     setTimeout(() => {
-      this.dataSource.filter = filterValue.trim().toLowerCase()
-    }, 200)
+      this.dataSource.filter = filterValue.trim().toLowerCase();
+    }, 200);
   }
 
   dropTable(event: CdkDragDrop<Array<M3UEntry>>) {
-    const prevIndex = this.dataSource.data.findIndex(d => d === event.item.data);
+    const prevIndex = this.dataSource.data.findIndex(
+      d => d === event.item.data
+    );
     moveItemInArray(this.dataSource.data, prevIndex, event.currentIndex);
     this.table.renderRows();
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected == numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected()
+      ? this.selection.clear()
+      : this.dataSource.data.forEach(row => this.selection.select(row));
   }
 }
