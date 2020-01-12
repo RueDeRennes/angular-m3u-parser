@@ -1,0 +1,3861 @@
+//#region Variables
+
+$default-theme-name: 'default';
+
+//#endregion
+
+//#region Mixins
+
+/// @access private
+/// @group Colors
+/// @requires {function} generate-accent-palette
+/// @requires {function} tint
+/// @requires {function} shade
+///
+@mixin _accent-style($name, $primary, $secondary) {
+    $color-name: $name;
+    $color-map: (
+        'primary': $primary,
+        'secondary': $secondary
+    );
+
+    .#{$color-name} {
+        @each $key, $value in $color-map {
+            $palette: generate-accent-palette(
+                $key,
+                $value,
+                (
+                    '': $value,
+                    'main': $value,
+                    'light': tint($value, 30),
+                    'dark': shade($value, 30)
+                )
+            );
+            @each $k, $v in $palette {
+                @if ($key == $k) {
+                    #{'--#{$key}-color'}: $v;
+                } @else {
+                    #{'--#{$key}-#{$k}-color'}: $v;
+                }
+            }
+        }
+    }
+}
+
+/// @access private
+/// @group Colors
+/// @requires {function} generate-accent-palette
+/// @requires {function} generate-scheme-palette
+///
+@mixin _scheme-style($name, $info, $success, $warning, $danger, $surface, $gray) {
+    $scheme-name: $name;
+    $scheme-map: (
+        'surface': $surface,
+        'gray': $gray
+    );
+    $paletts: ();
+
+    @each $key, $value in $scheme-map {
+        $paletts: map-merge(
+            $paletts,
+            (
+                $key: generate-scheme-palette($key, $value)
+            )
+        );
+    }
+
+    $paletts: map-merge(
+        $paletts,
+        (
+            'info':
+                generate-accent-palette(
+                    'info',
+                    $info,
+                    (
+                        '': $info
+                    )
+                )
+        )
+    );
+    $paletts: map-merge(
+        $paletts,
+        (
+            'success':
+                generate-accent-palette(
+                    'success',
+                    $success,
+                    (
+                        '': $success
+                    )
+                )
+        )
+    );
+    $paletts: map-merge(
+        $paletts,
+        (
+            'warning':
+                generate-accent-palette(
+                    'warning',
+                    $warning,
+                    (
+                        '': $warning
+                    )
+                )
+        )
+    );
+    $paletts: map-merge(
+        $paletts,
+        (
+            'danger':
+                generate-accent-palette(
+                    'danger',
+                    $danger,
+                    (
+                        '': $danger
+                    )
+                )
+        )
+    );
+
+    .#{$scheme-name} {
+        @each $key, $value in $paletts {
+            @each $k, $v in $value {
+                @if $key == $k {
+                    #{'--#{$key}-color'}: $v;
+                } @else {
+                    #{'--#{$key}-#{$k}-color'}: $v;
+                }
+            }
+        }
+    }
+}
+
+/// @access private
+/// @group Fonts
+/// @requires {function} empty
+///
+@mixin _font-style($font-url, $font-name, $font-fallback: '', $font-alias: '') {
+    @if not empty($font-url) {
+        @import url($font-url);
+    }
+
+    @if not empty($font-fallback) {
+        $font-name: append(quote($font-name), unquote(#{$font-fallback}), 'comma');
+    }
+
+    :root {
+        @if not empty($font-alias) {
+            #{'--#{$font-alias}-font-family'}: #{$font-name};
+        } @else {
+            #{'--font-family'}: #{$font-name};
+        }
+    }
+}
+
+//#endregion
+
+@mixin custom-colors-style {
+    .background-chess-color,
+    .bg-chess-color {
+        background-color: var(--background-color);
+        background-image: linear-gradient(45deg, var(--highlight-color) 25%, var(--transparent-color) 25%, var(--transparent-color) 75%, var(--highlight-color) 75%, var(--highlight-color)), linear-gradient(45deg, var(--highlight-color) 25%, var(--transparent-color) 25%, var(--transparent-color) 75%, var(--highlight-color) 75%, var(--highlight-color));
+        background-position: 0 0, 45px 45px;
+        background-size: 30px 30px;
+    }
+
+    .background-sketch-color,
+    .bg-sketch-color {
+        background-color: var(--background-color);
+        background: linear-gradient(-90deg, rgba(0, 0, 0, 0.02) 1px, transparent 0), linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 0), linear-gradient(-90deg, rgba(0, 0, 0, 0.03) 1px, transparent 0), linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 0), linear-gradient(transparent 4px, #f5f5f5 0, #f5f5f5 97px, transparent 0), linear-gradient(-90deg, #e5e5e5 1px, transparent 0), linear-gradient(-90deg, transparent 4px, #f5f5f5 0, #f5f5f5 97px, transparent 0), linear-gradient(#e5e5e5 1px, transparent 0), #f5f5f5;
+        background-size: 10px 10px, 10px 10px, 100px 100px, 100px 100px, 100px 100px, 100px 100px, 100px 100px, 100px 100px;
+    }
+}
+
+//#region Mixins
+
+/// @access public
+/// @group Colors
+/// @requires {mixin} _accent-style
+///
+@mixin blue-accent-style {
+    @include _accent-style('blue', #3498db, #2980b9);
+}
+
+//#endregion
+
+//#region Mixins
+
+/// @access public
+/// @group Colors
+/// @requires {mixin} _accent-style
+///
+@mixin green-accent-style {
+    @include _accent-style('green', #2ecc71, #2ecc71);
+}
+
+//#endregion
+
+//#region Mixins
+
+/// @access public
+/// @group Colors
+/// @requires {mixin} _accent-style
+///
+@mixin orange-accent-style {
+    @include _accent-style('orange', #e67e22, #d35400);
+}
+
+//#endregion
+
+//#region Mixins
+
+/// @access public
+/// @group Colors
+/// @requires {mixin} _accent-style
+///
+@mixin purple-accent-style {
+    @include _accent-style('purple', #9b59b6, #9b59b6);
+}
+
+//#endregion
+
+//#region Mixins
+
+/// @access public
+/// @group Colors
+/// @requires {mixin} _accent-style
+///
+@mixin red-accent-style {
+    @include _accent-style('red', #e74c3c, #e74c3c);
+}
+
+//#endregion
+
+//#region Mixins
+
+/// @access public
+/// @group Colors
+/// @requires {mixin} _accent-style
+///
+@mixin turquoise-accent-style {
+    @include _accent-style('turquoise', #1abc9c, #16a086);
+}
+
+//#endregion
+
+//#region Mixins
+
+/// @access public
+/// @group Colors
+/// @requires {mixin} _accent-style
+///
+@mixin yellow-accent-style {
+    @include _accent-style('yellow', #f1c40f, #f39c12);
+}
+
+//#endregion
+
+//#region Mixins
+
+/// @access public
+/// @group Colors
+/// @requires {mixin} _scheme-style
+///
+@mixin dark-scheme-style($info: #3498db, $success: #2ecc71, $warning: #f1c40f, $danger: #e74c3c) {
+    $scheme-name: 'dark';
+    $scheme-map-legacy: (
+        'contrast': #ffffff,
+        'background': #333333,
+        'foreground': #d5d5d5,
+        'highlight': #4c4c4c,
+        'middlelight': #5c5c5c,
+        'lowlight': #414345,
+        'transparent': rgba(255, 255, 255, 0),
+        'semi-transparent': rgba(51, 51, 51, 0.871),
+        'disabled': #686868
+    );
+
+    @include _scheme-style($scheme-name, $info, $success, $warning, $danger, #222222, #ffffff);
+
+    .#{$scheme-name} {
+        @each $key, $value in $scheme-map-legacy {
+            #{'--#{$key}-color'}: $value;
+        }
+    }
+}
+
+//#endregion
+
+//#region Mixins
+
+/// @access public
+/// @group Colors
+/// @requires {mixin} _scheme-style
+///
+@mixin dark-blue-scheme-style($info: #3498db, $success: #2ecc71, $warning: #f1c40f, $danger: #e74c3c) {
+    $scheme-name: 'dark-blue';
+    $scheme-map-legacy: (
+        'contrast': #ffffff,
+        'background': #100e17,
+        'foreground': #d5d5d5,
+        'highlight': #292435,
+        'middlelight': #2f283f,
+        'lowlight': #2d273b,
+        'transparent': s rgba(0, 0, 0, 0),
+        'semi-transparent': rgba(51, 51, 51, 0.871),
+        'disabled': #686868
+    );
+
+    @include _scheme-style($scheme-name, $info, $success, $warning, $danger, #100e17, #ffffff);
+
+    .#{$scheme-name} {
+        @each $key, $value in $scheme-map-legacy {
+            #{'--#{$key}-color'}: $value;
+        }
+    }
+}
+
+//#endregion
+
+//#region Mixins
+
+/// @access public
+/// @group Colors
+/// @requires {mixin} _scheme-style
+///
+@mixin light-scheme-style($info: #3498db, $success: #2ecc71, $warning: #f1c40f, $danger: #e74c3c) {
+    $scheme-name: 'light';
+    $scheme-map-legacy: (
+        'contrast': #ffffff,
+        'background': #ffffff,
+        'foreground': #262626,
+        'highlight': #dde1e4,
+        'middlelight': #bfc3c6,
+        'lowlight': #7e8c8d,
+        'transparent': rgba(0, 0, 0, 0),
+        'semi-transparent': rgba(204, 204, 204, 0.871),
+        'disabled': #dde1e4
+    );
+
+    @include _scheme-style($scheme-name, $info, $success, $warning, $danger, #ffffff, #000000);
+
+    .#{$scheme-name} {
+        @each $key, $value in $scheme-map-legacy {
+            #{'--#{$key}-color'}: $value;
+        }
+    }
+}
+
+//#endregion
+
+//#region Mixins
+
+/// @access public
+/// @group Colors
+/// @requires {mixin} _scheme-style
+///
+@mixin light-gray-scheme-style($info: #3498db, $success: #2ecc71, $warning: #f1c40f, $danger: #e74c3c) {
+    $scheme-name: 'light-gray';
+    $scheme-map-legacy: (
+        'contrast': #ffffff,
+        'background': #eaeaea,
+        'foreground': #3c454f,
+        'highlight': #d1d1d1,
+        'middlelight': #8a8a8a,
+        'lowlight': #5c5c5c,
+        'transparent': rgba(255, 255, 255, 0),
+        'semi-transparent': rgba(255, 255, 255, 0.667),
+        'disabled': #686868
+    );
+
+    @include _scheme-style($scheme-name, $info, $success, $warning, $danger, #222222, #000000);
+
+    .#{$scheme-name} {
+        @each $key, $value in $scheme-map-legacy {
+            #{'--#{$key}-color'}: $value;
+        }
+    }
+}
+
+//#endregion
+
+//#region Description
+
+/// The <abbr> tag defines an abbreviation or an acronym, like "Mr.", "Dec.", "ASAP", "ATM".
+/// API:
+/// States:
+///     .disabled, .readonly
+/// Styles:
+/// Layouts:
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast
+
+//#endregion
+
+/// @access private
+@mixin _abbreviation-style-base {
+    @include transition(border-bottom-color, 0.3s);
+
+    font-family: inherit;
+    cursor: help;
+    border-bottom-width: to-unit($thickness-factor, 'px');
+    border-bottom-style: solid;
+    border-bottom-color: var(--foreground-color);
+
+    //#region States
+
+    &.disabled {
+        border-bottom-color: var(--disabled-color);
+        color: var(--disabled-color);
+        cursor: default;
+    }
+
+    &.readonly {
+        border-bottom-style: dotted;
+        border-bottom-color: var(--disabled-color);
+        color: var(--lowlight-color);
+    }
+
+    //#endregion
+
+    @include colorset-style {
+        @include not('.disabled') {
+            border-bottom-color: $_colorset-style-ctx;
+        }
+    }
+}
+
+/// @access public
+@mixin abbreviation-style($args...) {
+    @include style($args, 'abbr', 'abbr') {
+        @include _abbreviation-style-base;
+        @content;
+    }
+}
+
+/// @access public
+@mixin core-style($args...) {
+    // this is defined in sanitize.scss
+    // *,
+    // ::after,
+    // ::before {
+    //     box-sizing: border-box;
+    // }
+
+    ::selection {
+        background: var(--primary-color);
+        color: var(--contrast-color);
+    }
+
+    .text-boxed {
+        border-radius: to-unit($radius-factor, 'px');
+        padding: 4px 8px;
+        margin: 0 8px;
+        font-size: $h6;
+        font-weight: 500;
+        color: var(--foreground-color);
+        background-color: var(--middlelight-color);
+        white-space: nowrap;
+    }
+
+    .text-taged {
+        border: solid 1px var(--primary-color);
+        color: var(--primary-color);
+        background-color: var(--transparent-color);
+        border-radius: to-unit($radius-factor, 'px');
+        padding: 0 4px;
+        margin: 0 8px;
+        font-size: 8px;
+        font-weight: 900;
+        white-space: nowrap;
+        line-height: 12px;
+        text-transform: uppercase;
+    }
+
+    .text-truncate {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .text-nowrap {
+        white-space: nowrap;
+    }
+
+    .text-ellipsis {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .text-clip {
+        overflow: hidden;
+        text-overflow: clip;
+        white-space: nowrap;
+    }
+
+    .text-break {
+        hyphens: auto;
+        word-break: break-word;
+        word-wrap: break-word;
+    }
+}
+
+//#region Description
+
+/// The <blockquote> tag specifies a section that is quoted from another source.
+/// API:
+/// States:
+///     .disabled
+/// Styles:
+/// Layouts:
+///     .reverse
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast
+
+//#endregion
+
+/// @access private
+@mixin _blockquote-style-base {
+    @include transition(border-left-color, 0.3s);
+
+    font-family: inherit;
+    border: none;
+    font-style: italic;
+    padding: 1rem 3rem;
+    position: relative;
+    margin: 0;
+
+    &::before,
+    &::after {
+        content: '“';
+        font-size: 6rem;
+        margin: -48px 0 0 -64px;
+        position: absolute;
+    }
+
+    &::after {
+        content: '”';
+        margin: -24px -4rem 0 0;
+    }
+
+    footer {
+        font-size: $h6;
+        font-weight: 700;
+        float: right;
+
+        &::before {
+            content: '\2015';
+        }
+    }
+
+    //#region States
+
+    &.disabled {
+        cursor: default;
+        color: var(--disabled-color);
+
+        &::before,
+        &::after {
+            color: var(--disabled-color);
+        }
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        &::before,
+        &::after {
+            color: $_colorset-style-ctx;
+        }
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin blockquote-style($args...) {
+    @include style($args, 'blockquote', 'blockq') {
+        @include _blockquote-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The <body> tag defines the document's body.
+/// The <body> element contains all the contents of an HTML document, such as text, hyperlinks, images, tables, lists, etc.
+/// API:
+/// States:
+/// Styles:
+/// Layouts:
+/// Colors:
+
+//#endregion
+
+/// @access private
+@mixin _body-style-base {
+    @include transition(background-color, color, 0.3s);
+    @include prefixed-properties(('webkit', 'moz-osx'), font-smoothing, auto);
+    font-family: var(--font-family);
+    line-height: 1.4;
+    letter-spacing: -0.1px;
+    background-color: var(--background-color);
+    color: var(--foreground-color);
+}
+
+/// @access public
+@mixin body-style($args...) {
+    @include style($args, 'body', 'body') {
+        @include _body-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The <button> tag defines a clickable button.
+/// Inside a <button> element you can put content, like text or images. This is the difference between this element and buttons created with the <input> element.
+/// API:
+/// States:
+///     .disabled, .selected, .loading
+/// Styles:
+///     .textual, .outlined, .round
+/// Layouts:
+///     .small, .medium, .large, .block
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast
+
+//#endregion
+
+/// @access private
+@mixin _button-style-base {
+    $transition-duration: 0.2s;
+
+    @include transition(background-color, color, border-color, box-shadow, $transition-duration);
+    font-family: inherit;
+    color: var(--foreground-color);
+    fill: var(--foreground-color);
+    background-color: var(--highlight-color);
+    border-color: var(--highlight-color);
+    border-radius: to-unit($radius-factor, 'px');
+    border-width: to-unit($thickness-factor, 'px');
+    border-style: solid;
+    cursor: pointer;
+    padding: to-unit($padding-factor, 'px');
+    font-size: $h4;
+    font-weight: 500;
+    line-height: 24px;
+    text-decoration: none;
+    text-transform: uppercase;
+    outline: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative;
+    box-sizing: border-box;
+
+    &::before {
+        @include transition(background-color, opacity, $transition-duration);
+
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        opacity: 0;
+        pointer-events: none;
+        border-radius: inherit;
+    }
+
+    // todo remove
+    // shit hack! for content color animation delay
+    * {
+        transition: all !important;
+    }
+
+    //#region States
+
+    &:hover,
+    &:active,
+    &:focus,
+    &.selected {
+        background-color: var(--lowlight-color);
+        border-color: var(--lowlight-color);
+        text-decoration: none;
+        box-shadow: $box-shadow-4dp;
+    }
+
+    &:active {
+        box-shadow: $box-shadow-2dp;
+
+        &::before {
+            background: currentColor;
+            opacity: 0.26;
+        }
+    }
+
+    &.disabled,
+    &:disabled,
+    &[disabled] {
+        cursor: default;
+        background-color: var(--disabled-color);
+        border-color: var(--disabled-color);
+        color: var(--lowlight-color);
+        box-shadow: none;
+        fill: var(--lowlight-color);
+        pointer-events: none;
+        user-select: none;
+
+        & * {
+            color: inherit;
+        }
+    }
+
+    //#endregion
+
+    //#region Styles
+
+    &.outlined {
+        border-style: solid;
+        border-color: var(--highlight-color);
+        border-width: to-unit($thickness-factor, 'px');
+        background-color: var(--transparent-color);
+        color: var(--foreground-color);
+        box-shadow: none;
+
+        &:hover,
+        &:active,
+        &:focus,
+        &.selected {
+            border-color: var(--lowlight-color);
+            color: var(--foreground-color);
+
+            &::before {
+                background: currentColor;
+                opacity: 0.13;
+            }
+        }
+
+        &:active {
+            &::before {
+                background: currentColor;
+                opacity: 0.26;
+            }
+        }
+
+        &:disabled {
+            border-color: var(--disabled-color);
+            color: var(--disabled-color);
+        }
+    }
+
+    &.textual {
+        // padding: 0;
+        // text-transform: unset;
+        background-color: var(--transparent-color);
+        border-color: var(--transparent-color);
+        color: var(--foreground-color);
+
+        &:hover,
+        &:active,
+        &:focus {
+            // background-color: var(--semi-transparent-color);
+            box-shadow: none;
+
+            &::before {
+                background: currentColor;
+                opacity: 0.13;
+            }
+        }
+
+        &:active {
+            &::before {
+                background: currentColor;
+                opacity: 0.26;
+            }
+        }
+
+        &.selected {
+            color: var(--secondary-color);
+            box-shadow: none;
+        }
+
+        &:disabled {
+            border-color: var(--transparent-color);
+            color: var(--disabled-color);
+            text-decoration: none;
+        }
+    }
+
+    &.round {
+        border-radius: $padding-factor + $thickness-factor + $h4;
+
+        &.small {
+            border-radius: ($padding-factor/2) + $thickness-factor + $h6;
+        }
+
+        &.medium {
+            border-radius: $padding-factor + $thickness-factor + $h4;
+        }
+
+        &.large {
+            border-radius: ($padding-factor * 2) + $thickness-factor + $h2;
+        }
+    }
+
+    //#endregion
+
+    //#region Layout
+
+    &.small {
+        font-size: $h6;
+        line-height: 16px;
+        border-radius: to-unit($radius-factor, 'px');
+        padding: to-unit($padding-factor/2, 'px');
+    }
+
+    &.medium {
+        font-size: $h4;
+        line-height: 24px;
+        border-radius: to-unit($radius-factor, 'px');
+        padding: to-unit($padding-factor, 'px');
+    }
+
+    &.large {
+        font-size: $h2;
+        line-height: 32px;
+        border-radius: to-unit($radius-factor, 'px');
+        padding: to-unit($padding-factor * 2, 'px');
+    }
+
+    &.block {
+        width: 100%;
+    }
+
+    &.loading {
+        position: relative;
+        pointer-events: none;
+
+        &::before {
+            background: var(--contrast-color);
+            opacity: 0.87;
+        }
+
+        &::after {
+            margin: -13px 0 0 -13px;
+            width: 24px;
+            height: 24px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            content: '';
+            border-radius: 24px;
+            background-clip: padding-box;
+            border: to-unit($thickness-factor, 'px') solid currentColor;
+            border-top-color: var(--transparent-color);
+            animation: rotate 750ms linear infinite;
+        }
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        @include not('.disabled', ':disabled', '[disabled]') {
+            border-color: $_colorset-style-ctx;
+            background-color: $_colorset-style-ctx;
+            color: var(--contrast-color);
+            fill: var(--contrast-color);
+
+            &.outlined {
+                color: $_colorset-style-ctx;
+                background-color: var(--transparent-color);
+
+                &:hover,
+                &:active,
+                &:focus,
+                &.selected {
+                    border-color: $_colorset-style-ctx;
+                }
+            }
+
+            &.textual {
+                color: $_colorset-style-ctx;
+                border-color: var(--transparent-color);
+                background-color: var(--transparent-color);
+
+                &.selected {
+                    color: $_colorset-style-ctx;
+                }
+            }
+
+            &.loading {
+                &::after {
+                    border: to-unit($thickness-factor, 'px') solid $_colorset-style-ctx;
+                    border-top-color: var(--transparent-color);
+                }
+            }
+        }
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin button-style($args...) {
+    @include style($args, 'button', 'btn') {
+        @include _button-style-base;
+        @content;
+    }
+
+    @include style($args, 'a', 'btn') {
+        @include _button-style-base;
+
+        padding: 0;
+
+        &:hover,
+        &:active,
+        &:focus,
+        &.selected {
+            text-decoration: underline;
+        }
+
+        @content;
+    }
+
+    @include style($args, "input[type='submit']", 'btn') {
+        @include _button-style-base;
+        @content;
+    }
+
+    @include style($args, "input[type='reset']", 'btn') {
+        @include _button-style-base;
+        @content;
+    }
+}
+
+// @see: https://codepen.io/simonbusborg/pen/cyxad
+// sass-lint:disable-block force-attribute-nesting, no-qualifying-elements, force-pseudo-nesting, no-color-literals
+@mixin _structured-button-style-base {
+    @include prefixed-properties(('webkit' 'moz'), appearance, none, true);
+    display: flex;
+    overflow: hidden;
+    margin: 10px;
+    padding-left: 12px;
+    padding-right: 12px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 150ms linear;
+    text-align: center;
+    white-space: nowrap;
+    text-decoration: none;
+    text-transform: capitalize;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: $h4 + 4;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 160px;
+    box-shadow: 2px 5px 10px var(--primary-color);
+    color: var(--contrast-color);
+    background: var(--primary-color);
+
+    &:hover {
+        transition: all 150ms linear;
+        opacity: 0.85;
+    }
+
+    &:active {
+        transition: all 150ms linear;
+        opacity: 0.75;
+    }
+
+    &:focus {
+        outline: 1px dotted #959595;
+        outline-offset: -4px;
+    }
+}
+
+@mixin structured-button-style($args...) {
+    @include style($args, 'button', 'btn') {
+        @include _button-style-base;
+        @content;
+    }
+
+    @include style($args, 'a', 'btn') {
+        @include _button-style-base;
+        @content;
+    }
+
+    @include style($args, "input[type='submit']", 'btn') {
+        @include _button-style-base;
+        @content;
+    }
+
+    @include style($args, "input[type='reset']", 'btn') {
+        @include _button-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The <input> tag specifies an input field where the user can enter data.
+/// API:
+/// States:
+///     .disabled
+/// Styles:
+///     .outlined, .textual
+/// Layouts:
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast, .transparent
+
+//#endregion
+
+/// @access private
+@mixin _checkbox-style-base {
+    appearance: none;
+    opacity: 0;
+    position: absolute;
+    margin: 0;
+    z-index: -1;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    left: 0;
+    pointer-events: none;
+    box-shadow: none;
+    color: var(--foreground-color);
+    fill: var(--contrast-color);
+    font-family: inherit;
+    outline: none;
+
+    + label {
+        position: relative;
+        padding-left: to-unit(24 + $margin-factor, 'px');
+        cursor: pointer;
+        line-height: 24px;
+        min-height: 24px;
+        font-size: $h4;
+
+        &::after {
+            @include transition(background-color, color, border-color, box-shadow, 0.3s);
+
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: block;
+            width: to-unit(24, 'px');
+            height: to-unit(24, 'px');
+            margin-top: 0;
+            margin-right: 0;
+            border: to-unit($thickness-factor, 'px') solid;
+            border-radius: to-unit($radius-factor, 'px');
+            border-color: var(--highlight-color);
+        }
+    }
+
+    &:hover,
+    &:active,
+    &:focus {
+        + label {
+            &::after {
+                border: to-unit($thickness-factor, 'px') solid;
+                border-color: var(--highlight-color);
+                box-shadow: $box-shadow-4dp;
+            }
+        }
+    }
+
+    &:checked + label {
+        &::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 8px;
+            width: 8px;
+            height: 14px;
+            border: 2px solid;
+            border-color: var(--contrast-color);
+            border-top-width: 0;
+            border-left-width: 0;
+            transform: rotate(45deg);
+            z-index: 1;
+        }
+
+        &::after {
+            background-color: var(--lowlight-color);
+            border-color: var(--lowlight-color);
+        }
+    }
+
+    &.disabled,
+    &:disabled,
+    &[disabled] {
+        + label {
+            cursor: default;
+            color: var(--disabled-color);
+
+            &::after {
+                border: 2px solid;
+                border-color: var(--disabled-color);
+                box-shadow: none;
+            }
+        }
+
+        &:checked + label {
+            &::before {
+                border-color: var(--disabled-color);
+            }
+
+            &::after {
+                border: 2px solid;
+                border-color: var(--disabled-color);
+                background-color: var(--transparent-color);
+            }
+        }
+    }
+
+    //#region Styles
+
+    &.outlined {
+        &:checked + label {
+            &::before {
+                border-color: currentColor;
+            }
+
+            &::after {
+                background-color: var(--transparent-color);
+                border-color: var(--lowlight-color);
+            }
+        }
+
+        &:hover,
+        &:active,
+        &:focus {
+            + label {
+                &::after {
+                    box-shadow: none;
+                }
+            }
+        }
+
+        &:disabled {
+            + label {
+                cursor: default;
+                color: var(--disabled-color);
+
+                &::after {
+                    border: 2px solid;
+                    border-color: var(--disabled-color);
+                    box-shadow: none;
+                }
+            }
+
+            &:checked + label {
+                &::before {
+                    border-color: var(--disabled-color);
+                }
+
+                &::after {
+                    border: 2px solid;
+                    border-color: var(--disabled-color);
+                    background-color: var(--transparent-color);
+                }
+            }
+        }
+    }
+
+    &.textual {
+        &:checked + label {
+            &::before {
+                border-color: currentColor;
+            }
+
+            &::after {
+                background-color: var(--transparent-color);
+                border-color: var(--transparent-color);
+            }
+        }
+
+        + label {
+            &::after {
+                border-color: var(--transparent-color);
+                box-shadow: none;
+            }
+        }
+    }
+
+    //#endregion
+
+    @include colorset-style {
+        @include not('.disabled', ':disabled', '[disabled]') {
+            + label {
+                &::after {
+                    color: $_colorset-style-ctx;
+                    fill: $_colorset-style-ctx;
+                    border-color: $_colorset-style-ctx;
+                }
+            }
+
+            &:checked + label {
+                &::after {
+                    background-color: $_colorset-style-ctx;
+                }
+            }
+
+            &.outlined {
+                &:checked + label {
+                    &::before {
+                        border-color: $_colorset-style-ctx;
+                    }
+
+                    &::after {
+                        background-color: var(--transparent-color);
+                    }
+                }
+            }
+
+            &.textual {
+                &:checked + label {
+                    &::before {
+                        border-color: $_colorset-style-ctx;
+                    }
+
+                    &::after {
+                        background-color: var(--transparent-color);
+                        border-color: var(--transparent-color);
+                    }
+                }
+
+                + label {
+                    &::after {
+                        border-color: var(--transparent-color);
+                        box-shadow: none;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/// @access public
+@mixin checkbox-style($args...) {
+    @include style($args, "input[type='checkbox']:not(.switch)", 'check') {
+        @include _checkbox-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The Code object represents an HTML <code> element.
+/// API:
+/// States:
+///     .disabled, .readonly
+/// Styles:
+/// Layouts:
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast, .transparent
+
+//#endregion
+
+/// @access private
+@mixin _code-style-base {
+    @include transition(color, 0.3s);
+    font-family: Menlo, Consolas, Roboto Mono, Ubuntu Monospace, Oxygen Mono, Liberation Mono, monospace;
+    font-size: $h4;
+    color: var(--foreground-color);
+
+    //#region States
+
+    &.disabled {
+        color: var(--disabled-color);
+    }
+
+    &.readonly {
+        color: var(--lowlight-color);
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        color: $_colorset-style-ctx;
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin code-style($args...) {
+    @include style($args, 'code', 'code') {
+        @include _code-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The <dl> tag defines a description list.
+/// The <dl> tag is used in conjunction with <dt> (defines terms/names) and <dd> (describes each term/name).
+/// API:
+/// States:
+///     .disabled
+/// Styles:
+/// Layouts:
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast, .transparent
+
+//#endregion
+
+/// @access private
+@mixin _description-list-style-base {
+    @include transition(color, 0.3s);
+    color: var(--forground-color);
+    font-family: inherit;
+
+    dt {
+        font-weight: bold;
+        font-family: inherit;
+    }
+
+    dd {
+        margin: to-unit($margin-factor/2, 'px') 0 to-unit($margin-factor, 'px');
+        font-family: inherit;
+    }
+
+    //#region States
+
+    &.disabled {
+        color: var(--disabled-color);
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        color: $_colorset-style-ctx;
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin description-list-style($args...) {
+    @include style($args, 'dl', 'dl') {
+        @include _description-list-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The <fieldset> tag is used to group related elements in a form.
+/// The <fieldset> tag draws a box around the related elements.
+/// API:
+/// States:
+/// Styles:
+/// Layouts:
+/// Colors:
+
+//#endregion
+
+/// @access private
+@mixin _fieldset-style-base {
+    font-family: inherit;
+    min-inline-size: initial;
+
+    > legend {
+        font-family: inherit;
+        display: block;
+        font-size: $h4;
+        line-height: $h4 + 4;
+        text-decoration: none;
+        text-transform: uppercase;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+}
+
+/// @access public
+@mixin fieldset-style($args...) {
+    @include style($args, 'fieldset', 'fset') {
+        @include _fieldset-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The Form object represents an HTML <form> element.
+/// API:
+/// Styles:
+///     .hidden
+
+//#endregion
+
+/// @access private
+@mixin _form-style-base {
+    font-size: $h4;
+    font-family: inherit;
+
+    .hidden {
+        visibility: hidden;
+
+        > * {
+            visibility: hidden;
+        }
+    }
+}
+
+/// @access public
+@mixin form-style($args...) {
+    @include style($args, 'form', 'frm') {
+        @include _form-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The Heading object represents an HTML heading element: <h1> to <h6>.
+/// API:
+/// States:
+///    .disabled, .readonly
+///    .bold, .italic, .underline, .strikeout
+/// Styles:
+///     .h1, .h2, .h3, .h4, .h5, .h6
+/// Layouts:
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast, .transparent
+
+//#endregion
+
+/// @access private
+@mixin _heading-style-base {
+    @include transition(color, opacity, 0.3s);
+    font-weight: normal;
+    font-family: inherit;
+
+    //#region States
+
+    &.bold {
+        font-weight: bold;
+    }
+
+    &.italic {
+        font-style: italic;
+    }
+
+    &.underline {
+        text-decoration: underline;
+    }
+
+    &.strikeout {
+        text-decoration: line-through;
+    }
+
+    &.disabled {
+        color: var(--disabled-color);
+    }
+
+    &.readonly {
+        opacity: 0.85;
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        color: $_colorset-style-ctx;
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin heading1-style($args...) {
+    @include style($args, 'h1', 'heading') {
+        @include _heading-style-base;
+        font-size: $h1;
+        @content;
+    }
+
+    @include style($args, '.h1', 'heading') {
+        @include _heading-style-base;
+        font-size: $h1;
+        @content;
+    }
+}
+
+/// @access public
+@mixin heading2-style($args...) {
+    @include style($args, 'h2', 'heading') {
+        @include _heading-style-base;
+        font-size: $h2;
+        @content;
+    }
+
+    @include style($args, '.h2', 'heading') {
+        @include _heading-style-base;
+        font-size: $h2;
+        @content;
+    }
+}
+
+/// @access public
+@mixin heading3-style($args...) {
+    @include style($args, 'h3', 'heading') {
+        @include _heading-style-base;
+        font-size: $h3;
+        @content;
+    }
+
+    @include style($args, '.h3', 'heading') {
+        @include _heading-style-base;
+        font-size: $h3;
+        @content;
+    }
+}
+
+/// @access public
+@mixin heading4-style($args...) {
+    @include style($args, 'h4', 'heading') {
+        @include _heading-style-base;
+        font-size: $h4;
+        @content;
+    }
+
+    @include style($args, '.h4', 'heading') {
+        @include _heading-style-base;
+        font-size: $h4;
+        @content;
+    }
+}
+
+/// @access public
+@mixin heading5-style($args...) {
+    @include style($args, 'h5', 'heading') {
+        @include _heading-style-base;
+        font-size: $h5;
+        @content;
+    }
+
+    @include style($args, '.h5', 'heading') {
+        @include _heading-style-base;
+        font-size: $h5;
+        @content;
+    }
+}
+
+/// @access public
+@mixin heading6-style($args...) {
+    @include style($args, 'h6', 'heading') {
+        @include _heading-style-base;
+        font-size: $h6;
+        @content;
+    }
+
+    @include style($args, '.h6', 'heading') {
+        @include _heading-style-base;
+        font-size: $h6;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The HR object represents an HTML <hr> element.
+/// API:
+/// States:
+///     .disabled
+/// Styles:
+/// Layouts:
+///      .horizontal, .vertical, .full, .auto, .inset
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast, .transparent
+
+//#endregion
+
+/// @access private
+@mixin _horizontal-rule-style-base {
+    @include transition(background-color, 0.3s);
+
+    border: none;
+    background-color: var(--highlight-color);
+    box-sizing: content-box;
+    margin: to-unit($margin-factor, 'px') 0;
+    height: to-unit($thickness-factor, 'px');
+    min-height: to-unit($thickness-factor, 'px');
+    width: #{($margin-factor * 4) + 'px'};
+    font-family: inherit;
+
+    &.horizontal {
+        margin: to-unit($margin-factor, 'px') 0;
+        height: to-unit($thickness-factor, 'px');
+        min-height: to-unit($thickness-factor, 'px');
+        width: #{($margin-factor * 4) + 'px'};
+
+        &.full {
+            width: 100%;
+        }
+
+        &.auto {
+            width: auto;
+        }
+
+        &.inset {
+            margin: 0 0 0 to-unit($margin-factor * 10, 'px');
+        }
+    }
+
+    &.vertical {
+        margin: 0 to-unit($margin-factor, 'px');
+        height: #{($margin-factor * 4) + 'px'};
+        width: to-unit($thickness-factor, 'px');
+        min-width: to-unit($thickness-factor, 'px');
+
+        &.full {
+            height: 100%;
+        }
+
+        &.auto {
+            height: auto;
+        }
+
+        &.inset {
+            margin: to-unit($margin-factor * 10, 'px') 0 0;
+        }
+    }
+
+    //#region States
+
+    &.disabled {
+        background-color: var(--disabled-color);
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        background-color: $_colorset-style-ctx;
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin horizontal-rule-style($args...) {
+    @include style($args, 'hr', 'hr') {
+        @include _horizontal-rule-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The <html> tag tells the browser that this is an HTML document.
+/// The <html> tag represents the root of an HTML document.
+/// API:
+/// States:
+/// Styles:
+/// Layouts:
+/// Colors:
+
+//#endregion
+
+/// @access private
+@mixin _html-style-base {
+    @include transition(background-color, color, 0.3s);
+    @include prefixed-properties(('webkit', 'moz-osx'), font-smoothing, auto);
+    font-family: var(--font-family);
+    line-height: 1.4;
+    letter-spacing: -0.1px;
+    background-color: var(--background-color);
+    color: var(--foreground-color);
+}
+
+/// @access public
+@mixin html-style($args...) {
+    @include style($args, 'html', 'html') {
+        @include _html-style-base;
+        @content;
+    }
+}
+
+// sass-lint:disable-block force-attribute-nesting, no-qualifying-elements, force-pseudo-nesting
+// sass-lint:disable-block no-vendor-prefixes
+
+//#region Description
+
+/// The <input> tag specifies an input field where the user can enter data.
+/// API:
+/// States:
+///     .disabled
+/// Styles:
+///     .outlined, .textual, .round
+/// Layouts:
+///     .small, .medium, .large, .block
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast
+
+//#endregion
+
+/// @access private
+@mixin _input-style-base {
+    @include transition(background-color, color, border-color, box-shadow, 0.3s);
+    background-color: var(--semi-transparent-color);
+    border-radius: #{$radius-factor + 'px'};
+    border-width: #{$thickness-factor + 'px'};
+    border-style: solid;
+    border-color: var(--highlight-color);
+    box-shadow: none;
+    color: var(--foreground-color);
+    fill: var(--contrast-color);
+    font-family: inherit;
+    font-size: $h4;
+    height: auto;
+    line-height: 24px;
+    outline: none;
+    padding: #{$padding-factor + 'px'};
+    text-decoration: none;
+
+    &:hover,
+    &:active,
+    &:focus {
+        border-color: var(--secondary-color);
+        box-shadow: $box-shadow-4dp;
+        background-color: var(--background-color);
+    }
+
+    &:disabled {
+        cursor: default;
+        background-color: var(--disabled-color);
+        border-color: var(--disabled-color);
+        border-style: solid;
+        color: var(--lowlight-color);
+
+        &:hover,
+        &:active,
+        &:focus {
+            box-shadow: none;
+        }
+    }
+
+    &:read-only {
+        @include not(':disabled') {
+            border-style: dotted;
+            border-color: var(--highlight-color);
+
+            &:hover,
+            &:active,
+            &:focus {
+                border-style: dotted;
+                border-color: var(--secondary-color);
+            }
+        }
+    }
+
+    &::selection {
+        background: var(--primary-color);
+        color: var(--contrast-color);
+    }
+
+    &::placeholder {
+        color: var(--semi-transparent-color);
+        font-style: italic;
+    }
+
+    //#region Styles
+
+    &.outlined {
+        border-style: solid;
+        border-color: var(--highlight-color);
+        border-width: to-unit($thickness-factor, 'px');
+        background-color: var(--transparent-color);
+        color: var(--primar-color);
+
+        &:hover,
+        &:active,
+        &:focus,
+        &.selected {
+            border-color: var(--secondary-color);
+            color: var(--secondary-color);
+        }
+
+        &:disabled {
+            border-color: var(--disabled-color);
+            color: var(--disabled-color);
+        }
+    }
+
+    &.textual {
+        border-color: var(--transparent-color);
+        background-color: var(--transparent-color);
+        color: var(--foreground-color);
+
+        &:hover,
+        &:active,
+        &:focus {
+            border-color: var(--transparent-color);
+            box-shadow: none;
+        }
+
+        &:disabled {
+            background-color: var(--transparent-color);
+            border-color: var(--transparent-color);
+            color: var(--disabled-color);
+        }
+    }
+
+    &.round {
+        border-radius: $padding-factor + $h4;
+
+        &.small {
+            border-radius: $padding-factor + $h6;
+        }
+
+        &.medium {
+            border-radius: $padding-factor + $h4;
+        }
+
+        &.large {
+            border-radius: $padding-factor + $h2;
+        }
+    }
+
+    //#endregion
+
+    //#region Layouts
+
+    &.small {
+        padding: to-unit($padding-factor/2, 'px');
+        font-size: $h6;
+        line-height: 16px;
+        border-radius: to-unit($radius-factor, 'px');
+    }
+
+    &.medium {
+        padding: to-unit($padding-factor, 'px');
+        font-size: $h4;
+        line-height: 24px;
+        border-radius: to-unit($radius-factor, 'px');
+    }
+
+    &.large {
+        padding: to-unit($padding-factor + ($padding-factor/2), 'px');
+        font-size: $h2;
+        line-height: 32px;
+        border-radius: to-unit($radius-factor, 'px');
+    }
+
+    &.block {
+        width: 100%;
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        @include not(':disabled' '.textual') {
+            &:not(:read-only) {
+                border-color: $_colorset-style-ctx;
+            }
+
+            &:not(:-moz-read-only) {
+                border-color: $_colorset-style-ctx;
+            }
+        }
+        @include not(':disabled') {
+            &:not(:read-only) {
+                border-color: $_colorset-style-ctx;
+
+                &::placeholder {
+                    color: $_colorset-style-ctx;
+                }
+            }
+
+            &:not(:-moz-read-only) {
+                border-color: $_colorset-style-ctx;
+
+                &::placeholder {
+                    color: $_colorset-style-ctx;
+                }
+            }
+        }
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin input-style($args...) {
+    @include style($args, "input[type='email']", 'input') {
+        @include _input-style-base;
+        @content;
+    }
+    @include style($args, "input[type='number']", 'input') {
+        @include _input-style-base;
+        @content;
+    }
+    @include style($args, "input[type='password']", 'input') {
+        @include _input-style-base;
+        @content;
+    }
+    @include style($args, "input[type='search']", 'input') {
+        @include _input-style-base;
+        @content;
+    }
+    @include style($args, "input[type='tel']", 'input') {
+        @include _input-style-base;
+        @content;
+    }
+    @include style($args, "input[type='text']", 'input') {
+        @include _input-style-base;
+        @content;
+    }
+    @include style($args, "input[type='url']", 'input') {
+        @include _input-style-base;
+        @content;
+    }
+    @include style($args, "input[type='date']", 'input') {
+        @include _input-style-base;
+        @content;
+    }
+    @include style($args, "input[type='datetime']", 'input') {
+        @include _input-style-base;
+        @content;
+    }
+    @include style($args, "input[type='datetime-local']", 'input') {
+        @include _input-style-base;
+        @content;
+    }
+    @include style($args, "input[type='month']", 'input') {
+        @include _input-style-base;
+        @content;
+    }
+    @include style($args, "input[type='week']", 'input') {
+        @include _input-style-base;
+        @content;
+    }
+    @include style($args, "input[type='time']", 'input') {
+        @include _input-style-base;
+        @content;
+    }
+    @include style($args, "input[type='color']", 'input') {
+        @include _input-style-base;
+        @content;
+    }
+    @include style($args, 'input:not([type])', 'input') {
+        @include _input-style-base;
+        @content;
+    }
+
+    //#region System styles
+
+    //#region Chrome
+
+    input::-webkit-inner-spin-button,
+    input::-webkit-clear-button,
+    input[type='search']::-webkit-search-decoration,
+    input[type='search']::-webkit-search-cancel-button,
+    input[type='search']::-webkit-search-results-button,
+    input[type='search']::-webkit-search-results-decoration {
+        display: none;
+    }
+
+    input::-webkit-color-swatch-wrapper {
+        height: 24px;
+        border-radius: to-unit($radius-factor/2, 'px');
+        overflow: hidden;
+        padding: 0;
+    }
+
+    input::-webkit-color-swatch {
+        border: none;
+        height: 24px;
+    }
+
+    //#endregion
+
+    //#region Edge
+
+    input::-ms-clear {
+        display: none;
+    }
+
+    input:-moz-focusring {
+        outline: none;
+    }
+
+    //#endregion
+
+    //#endregion
+}
+
+//#region Description
+
+/// The <kbd> tag is a phrase tag. It defines keyboard input.
+/// API:
+/// States:
+///     .disabled
+/// Styles:
+/// Layouts:
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast
+
+//#endregion
+
+/// @access private
+@mixin _kbd-style-base {
+    @include transition(background-color, color, border-color, 0.3s);
+    background-color: var(--highlight-color);
+    border-radius: to-unit($radius-factor, 'px');
+    border-style: none;
+    box-shadow: $box-shadow-1dp;
+    color: var(--foreground-color);
+    display: inline-block;
+    font-size: $h6;
+    font-weight: 600;
+    line-height: 1;
+    padding: to-unit($padding-factor/2, 'px') to-unit($padding-factor, 'px');
+    white-space: nowrap;
+
+    //#region States
+
+    &.disabled {
+        background-color: var(--disabled-color);
+        border-color: var(--disabled-color);
+        color: var(--lowlight-color);
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        @include not('.disabled') {
+            background-color: $_colorset-style-ctx;
+            border-color: $_colorset-style-ctx;
+            color: var(--contrast-color);
+        }
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin kbd-style($args...) {
+    @include style($args, 'kbd', 'kbd') {
+        @include _kbd-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The <label> tag defines a label for a <button>, <input>, <meter>, <output>, <progress>, <select>, or <textarea> element.
+/// The <label> element does not render as anything special for the user.
+/// However, it provides a usability improvement for mouse users, because if the user clicks on the text within the <label> element, it toggles the control.
+/// The for attribute of the <label> tag should be equal to the id attribute of the related element to bind them together.
+/// API:
+/// States:
+///    .disabled, .readonly
+///    .bold, .italic, .underline, .strikeout
+/// Styles:
+/// Layouts:
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast
+
+//#endregion
+
+/// @access private
+@mixin _label-style-base {
+    @include transition(color, 0.3s);
+    font-family: inherit;
+    font-size: $h6;
+    color: var(--foreground-color);
+
+    //#region States
+
+    &.bold {
+        font-weight: bold;
+    }
+
+    &.italic {
+        font-style: italic;
+    }
+
+    &.underline {
+        text-decoration: underline;
+    }
+
+    &.strikeout {
+        text-decoration: line-through;
+    }
+
+    &.disabled {
+        color: var(--disabled-color);
+    }
+
+    &.readonly {
+        color: var(--lowlight-color);
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        color: $_colorset-style-ctx;
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin label-style($args...) {
+    @include style($args, 'label', 'label') {
+        @include _label-style-base;
+        @content;
+    }
+    @include style($args, '.label', 'label') {
+        @include _label-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The Mark object represents an HTML <mark> element.
+/// API:
+/// States:
+///     .disabled, .readonly
+/// Styles:
+/// Layouts:
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast, .transparent
+
+//#endregion
+
+/// @access private
+@mixin _mark-style-base {
+    @include transition(background-color, color, 0.3s);
+    background-color: var(--highlight-color);
+    font-family: inherit;
+
+    //#region States
+
+    &.disabled {
+        background-color: var(--transparent-color);
+        color: var(--disabled-color);
+    }
+
+    &.readonly {
+        background-color: var(--highlight-color);
+        color: var(--lowlight-color);
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        background-color: $_colorset-style-ctx;
+        color: var(--contrast-color);
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin mark-style($args...) {
+    @include style($args, 'mark', 'mark') {
+        @include _mark-style-base;
+        @content;
+    }
+}
+
+// sass-lint:disable-block no-vendor-prefixes
+
+//#region Description
+
+/// The <meter> tag.
+/// API:
+/// States:
+///     .disabled
+/// Styles:
+/// Layouts:
+///     .block
+/// Colors:
+
+//#endregion
+
+/// @access private
+@mixin _meter-style-base {
+    $transition-duration: 0.2s;
+
+    @include prefixed-properties(('webkit' 'moz'), appearance, none);
+    @include transition(background-color, color, $transition-duration);
+
+    border: none;
+    height: 4px;
+    vertical-align: middle;
+    color: var(--lowlight-color);
+    background-color: var(--highlight-color);
+    border-radius: to-unit($radius-factor, 'px');
+    display: block;
+
+    &::-webkit-meter-inner-element {
+        display: block;
+    }
+
+    &::-webkit-meter-bar,
+    &::-webkit-meter-optimum-value,
+    &::-webkit-meter-suboptimum-value,
+    &::-webkit-meter-even-less-good-value {
+        border-radius: to-unit($radius-factor, 'px');
+    }
+
+    &::-webkit-meter-bar {
+        background-color: var(--highlight-color);
+        background-image: none;
+    }
+
+    &::-webkit-meter-optimum-value {
+        background-color: var(--success-color);
+        background-image: none;
+    }
+
+    &::-webkit-meter-suboptimum-value {
+        background-color: var(--warning-color);
+        background-image: none;
+    }
+
+    &::-webkit-meter-even-less-good-value {
+        background-color: var(--danger-color);
+        background-image: none;
+    }
+
+    &::-moz-meter-bar,
+    &:-moz-meter-optimum,
+    &:-moz-meter-sub-optimum,
+    &:-moz-meter-sub-sub-optimum {
+        border-radius: to-unit($radius-factor, 'px');
+    }
+
+    &:-moz-meter-optimum::-moz-meter-bar {
+        background-color: var(--success-color);
+        background-image: none;
+    }
+
+    &:-moz-meter-sub-optimum::-moz-meter-bar {
+        background-color: var(--warning-color);
+        background-image: none;
+    }
+
+    &:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+        background-color: var(--danger-color);
+        background-image: none;
+    }
+
+    //#region States
+
+    &:disabled,
+    &.disabled {
+        &::-webkit-meter-optimum-value {
+            background-color: var(--disabled-color);
+        }
+
+        &::-webkit-meter-suboptimum-value {
+            background-color: var(--disabled-color);
+        }
+
+        &::-webkit-meter-even-less-good-value {
+            background-color: var(--disabled-color);
+        }
+
+        &:-moz-meter-optimum::-moz-meter-bar {
+            background-color: var(--disabled-color);
+        }
+
+        &:-moz-meter-sub-optimum::-moz-meter-bar {
+            background-color: var(--disabled-color);
+        }
+
+        &:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+            background-color: var(--disabled-color);
+        }
+    }
+
+    //#endregion
+
+    //#region Layout
+
+    &.block {
+        width: 100%;
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin meter-style($args...) {
+    @include style($args, 'meter', 'meter') {
+        @include _meter-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The HTML <p> element represents a paragraph.
+/// Paragraphs are usually represented in visual media as blocks of text separated from adjacent blocks by blank lines and/or first-line indentation, but HTML paragraphs can be any structural grouping of related content, such as images or form fields.
+/// API:
+/// States:
+///    .disabled, .readonly
+///    .bold, .italic, .underline, .strikeout
+/// Styles:
+/// Layouts:
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast
+
+//#endregion
+
+/// @access private
+@mixin _paragraph-style-base {
+    @include transition(color, 0.3s);
+    font-family: inherit;
+    color: var(--foreground-color);
+
+    //#region States
+
+    &.bold {
+        font-weight: bold;
+    }
+
+    &.italic {
+        font-style: italic;
+    }
+
+    &.underline {
+        text-decoration: underline;
+    }
+
+    &.strikeout {
+        text-decoration: line-through;
+    }
+
+    &.disabled {
+        color: var(--disabled-color);
+    }
+
+    &.readonly {
+        color: var(--lowlight-color);
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        color: $_colorset-style-ctx;
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin paragraph-style($args...) {
+    @include style($args, 'p', 'p') {
+        @include _paragraph-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The Pre object represents an HTML <pre> element.
+/// API:
+/// States:
+///     .disabled, .readonly
+/// Styles:
+/// Layouts:
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast, .transparent
+
+//#endregion
+
+/// @access private
+@mixin _pre-style-base {
+    @include transition(color, 0.3s);
+    line-height: 1.6;
+    margin: to-unit($padding-factor, 'px') to-unit($padding-factor * 2, 'px');
+    white-space: pre-wrap;
+    color: var(--foreground-color);
+    font-family: inherit;
+
+    //#region States
+
+    &.disabled {
+        color: var(--disabled-color);
+    }
+
+    &.readonly {
+        color: var(--lowlight-color);
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        color: $_colorset-style-ctx;
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin pre-style($args...) {
+    @include style($args, 'pre', 'pre') {
+        @include _pre-style-base;
+        @content;
+    }
+}
+
+// sass-lint:disable-block no-vendor-prefixes
+
+//#region Description
+
+/// The <progress> tag.
+/// API:
+/// States:
+///     .disabled
+/// Styles:
+/// Layouts:
+///     .block
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast
+
+//#endregion
+
+/// @access private
+@mixin _progress-style-base {
+    $transition-duration: 0.2s;
+
+    @include animation-keyframe(indeterminate) {
+        0% {
+            background-position: 32% 0, 32% 0, 50% 0;
+        }
+
+        2% {
+            background-position: 32% 0, 32% 0, 50% 0;
+        }
+
+        21% {
+            background-position: 32% 0, -18% 0, 0 0;
+        }
+
+        42% {
+            background-position: 32% 0, -68% 0, -27% 0;
+        }
+
+        50% {
+            background-position: 32% 0, -93% 0, -46% 0;
+        }
+
+        56% {
+            background-position: 32% 0, -118% 0, -68% 0;
+        }
+
+        66% {
+            background-position: -11% 0, -200% 0, -100% 0;
+        }
+
+        71% {
+            background-position: -32% 0, -200% 0, -100% 0;
+        }
+
+        79% {
+            background-position: -54% 0, -242% 0, -100% 0;
+        }
+
+        86% {
+            background-position: -68% 0, -268% 0, -100% 0;
+        }
+
+        100% {
+            background-position: -100% 0, -300% 0, -100% 0;
+        }
+    }
+
+    @include prefixed-properties(('webkit' 'moz'), appearance, none);
+    @include transition(background-color, color, $transition-duration);
+
+    border: none;
+    height: 4px;
+    vertical-align: middle;
+    color: var(--lowlight-color);
+    background-color: var(--highlight-color);
+    border-radius: to-unit($radius-factor, 'px');
+    display: block;
+
+    &::-webkit-progress-bar {
+        background-color: var(--transparen-color);
+        border-radius: to-unit($radius-factor, 'px');
+    }
+
+    &::-webkit-progress-value {
+        background-color: currentColor;
+        border-radius: to-unit($radius-factor, 'px');
+    }
+
+    &::-moz-progress-bar {
+        background-color: currentColor;
+        border-radius: to-unit($radius-factor, 'px');
+    }
+
+    &::-ms-fill {
+        border: none;
+        background-color: currentColor;
+        border-radius: to-unit($radius-factor, 'px');
+    }
+
+    .indeterminate,
+    &:indeterminate {
+        background-size: 200% 100%;
+        background-image: linear-gradient(to right, currentColor 16%, transparent 16%), linear-gradient(to right, currentColor 16%, transparent 16%), linear-gradient(to right, currentColor 25%, transparent 25%);
+        animation: indeterminate 1.8s infinite linear;
+
+        &::-webkit-progress-value {
+            background-color: transparent;
+        }
+
+        &::-moz-progress-bar {
+            background-color: transparent;
+        }
+
+        &::-ms-fill {
+            animation-name: none;
+        }
+    }
+
+    //#region States
+
+    &:disabled,
+    &.disabled {
+        background-color: var(--disabled-color);
+        color: var(--lowlight-color);
+
+        .indeterminate,
+        &:indeterminate {
+            animation: unset;
+            background-size: unset;
+            background-image: unset;
+        }
+    }
+
+    //#endregion
+
+    //#region Layout
+
+    &.block {
+        width: 100%;
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        @include not('.disabled') {
+            color: $_colorset-style-ctx;
+        }
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin progress-style($args...) {
+    @include style($args, 'progress', 'progress') {
+        @include _progress-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The <input> tag specifies an input field where the user can enter data.
+/// API:
+/// States:
+///     .disabled
+/// Styles:
+///     .outlined, .textual
+/// Layouts:
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast, .transparent
+
+//#endregion
+
+/// @access private
+@mixin _radio-style-base {
+    appearance: none;
+    opacity: 0;
+    position: absolute;
+    margin: 0;
+    z-index: -1;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    left: 0;
+    pointer-events: none;
+    box-shadow: none;
+    color: var(--foreground-color);
+    fill: var(--contrast-color);
+    font-family: inherit;
+    outline: none;
+
+    + label {
+        position: relative;
+        padding-left: to-unit(24 + $margin-factor, 'px');
+        cursor: pointer;
+        line-height: 24px;
+        min-height: 24px;
+        font-size: $h4;
+
+        &::after {
+            @include transition(background-color, color, border-color, box-shadow, 0.3s);
+
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: block;
+            width: to-unit(24, 'px');
+            height: to-unit(24, 'px');
+            margin-top: 0;
+            margin-right: 0;
+            border: to-unit($thickness-factor, 'px') solid;
+            border-radius: 50%;
+            border-color: var(--highlight-color);
+        }
+    }
+
+    &:hover,
+    &:active,
+    &:focus {
+        + label {
+            &::after {
+                border: to-unit($thickness-factor, 'px') solid;
+                border-color: var(--highlight-color);
+                box-shadow: $box-shadow-4dp;
+            }
+        }
+    }
+
+    &:checked + label {
+        &::before {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: 12px;
+            height: 12px;
+            background-color: var(--contrast-color);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        &::after {
+            background-color: var(--lowlight-color);
+            border-color: var(--lowlight-color);
+        }
+    }
+
+    &.disabled,
+    &:disabled,
+    &[disabled] {
+        + label {
+            cursor: default;
+            color: var(--disabled-color);
+
+            &::after {
+                border-color: var(--disabled-color);
+                box-shadow: none;
+            }
+        }
+
+        &:checked + label {
+            &::before {
+                border-color: var(--disabled-color);
+            }
+
+            &::after {
+                border-color: var(--disabled-color);
+                background-color: var(--disabled-color);
+                box-shadow: none;
+            }
+        }
+    }
+
+    //#region Styles
+
+    &.outlined {
+        &:checked + label {
+            &::before {
+                border-color: currentColor;
+                background-color: var(--lowlight-color);
+            }
+
+            &::after {
+                background-color: var(--transparent-color);
+                border-color: var(--lowlight-color);
+            }
+        }
+
+        &:hover,
+        &:active,
+        &:focus {
+            + label {
+                &::after {
+                    box-shadow: none;
+                }
+            }
+        }
+
+        &:disabled {
+            + label {
+                cursor: default;
+                color: var(--disabled-color);
+
+                &::after {
+                    border: 2px solid;
+                    border-color: var(--disabled-color);
+                    box-shadow: none;
+                }
+            }
+
+            &:checked + label {
+                &::before {
+                    background-color: var(--disabled-color);
+                }
+
+                &::after {
+                    border: 2px solid var(--disabled-color);
+                    background-color: var(--transparent-color);
+                }
+            }
+        }
+    }
+
+    &.textual {
+        &:checked + label {
+            &::before {
+                background-color: currentColor;
+            }
+
+            &::after {
+                background-color: var(--transparent-color);
+                border-color: var(--transparent-color);
+            }
+        }
+
+        + label {
+            &::after {
+                border-color: var(--transparent-color);
+                box-shadow: none;
+            }
+        }
+    }
+
+    //#endregion
+
+    @include colorset-style {
+        @include not('.disabled', ':disabled', '[disabled]') {
+            + label {
+                &::after {
+                    color: $_colorset-style-ctx;
+                    fill: $_colorset-style-ctx;
+                    border-color: $_colorset-style-ctx;
+                }
+            }
+
+            &:checked + label {
+                &::after {
+                    background-color: $_colorset-style-ctx;
+                }
+            }
+
+            &.outlined {
+                &:checked + label {
+                    &::before {
+                        background-color: $_colorset-style-ctx;
+                    }
+
+                    &::after {
+                        background-color: var(--transparent-color);
+                    }
+                }
+            }
+
+            &.textual {
+                &:checked + label {
+                    &::before {
+                        background-color: $_colorset-style-ctx;
+                    }
+
+                    &::after {
+                        background-color: var(--transparent-color);
+                        cborder-color: var(--transparent-color);
+                    }
+                }
+
+                + label {
+                    &::after {
+                        border-color: var(--transparent-color);
+                        box-shadow: none;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/// @access public
+@mixin radio-style($args...) {
+    @include style($args, "input[type='radio']", 'radio') {
+        @include _radio-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The Select object represents an HTML <select> element.
+/// API
+/// States:
+///     .disabled
+/// Styles:
+///     .outlined, .textual, .round
+/// Layouts:
+///     .small, .medium, .large, .block
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast
+
+//#endregion
+
+/// @access private
+@mixin _select-style-base {
+    @include prefixed-properties(('webkit' 'moz'), appearance, none);
+    @include transition(background-color, color, border-color, box-shadow, 0.3s);
+
+    background-color: var(--background-color);
+    border-radius: #{$radius-factor + 'px'};
+    border-width: #{$thickness-factor + 'px'};
+    border-style: solid;
+    border-color: var(--highlight-color);
+    box-shadow: none;
+    color: var(--foreground-color);
+    fill: var(--contrast-color);
+    font-family: inherit;
+    font-size: $h4;
+    height: auto;
+    line-height: 24px;
+    outline: none;
+    padding: to-unit($padding-factor, 'px') to-unit($padding-factor * 3, 'px') to-unit($padding-factor, 'px') to-unit($padding-factor, 'px');
+
+    text-decoration: none;
+    cursor: pointer;
+
+    > svg {
+        fill: var(--foreground-color);
+    }
+
+    @include not('[multiple]') {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/></svg>');
+        background-position-x: right;
+        background-position-y: center;
+        background-repeat: no-repeat;
+    }
+
+    &::selection {
+        background: var(--primary-color);
+        color: var(--contrast-color);
+    }
+
+    //#region States
+
+    &:hover,
+    &:active,
+    &:focus {
+        border-color: var(--secondary-color);
+        box-shadow: $box-shadow-4dp;
+    }
+
+    &:disabled {
+        cursor: default;
+        background-color: var(--disabled-color);
+        border-color: var(--disabled-color);
+        border-style: solid;
+        color: var(--lowlight-color);
+
+        &:hover,
+        &:active,
+        &:focus {
+            box-shadow: none;
+        }
+    }
+
+    //#endregion
+
+    //#region Styles
+
+    &.textual {
+        border-color: var(--transparent-color);
+        background-color: var(--transparent-color);
+        color: var(--foreground-color);
+
+        &:hover,
+        &:active,
+        &:focus {
+            border-color: var(--transparent-color);
+            box-shadow: none;
+        }
+
+        &:disabled {
+            background-color: var(--transparent-color);
+            border-color: var(--transparent-color);
+            color: var(--disabled-color);
+        }
+    }
+
+    //#endregion
+
+    //#region Layouts
+
+    &.small {
+        padding: to-unit($padding-factor/2, 'px');
+        padding: to-unit($padding-factor/2, 'px') to-unit($padding-factor * 3 - $padding-factor/2, 'px') to-unit($padding-factor/2, 'px') to-unit($padding-factor/2, 'px');
+        font-size: $h6;
+        line-height: 16px;
+        border-radius: to-unit($radius-factor, 'px');
+    }
+
+    &.medium {
+        padding: to-unit($padding-factor, 'px') to-unit($padding-factor * 3, 'px') to-unit($padding-factor, 'px') to-unit($padding-factor, 'px');
+        font-size: $h4;
+        line-height: 24px;
+        border-radius: to-unit($radius-factor, 'px');
+    }
+
+    &.large {
+        padding: to-unit($padding-factor + ($padding-factor/2), 'px') to-unit($padding-factor * 3, 'px') to-unit($padding-factor + ($padding-factor/2), 'px') to-unit($padding-factor + ($padding-factor/2), 'px');
+        font-size: $h2;
+        line-height: 32px;
+        border-radius: to-unit($radius-factor, 'px');
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        @include not(':disabled' '.textual') {
+            border-color: $_colorset-style-ctx;
+        }
+        @include not(':disabled') {
+            color: $_colorset-style-ctx;
+
+            &::placeholder {
+                color: $_colorset-style-ctx;
+            }
+        }
+    }
+
+    //#endregion
+}
+
+/// @access private
+@mixin _option-style-base {
+    background-color: var(--background-color);
+    color: var(--foreground-color);
+
+    &:hover {
+        background-color: var(--primary-color);
+        color: var(--foreground-color);
+    }
+}
+
+/// @access public
+@mixin select-style($args...) {
+    @include style($args, 'select', 'sel') {
+        @include _select-style-base;
+        @include style($args, 'option', 'opt') {
+            @include _option-style-base;
+        }
+        @content;
+    }
+}
+
+// sass-lint:disable-block no-vendor-prefixes
+
+//#region Description
+
+/// The <input type="range"> tag.
+/// API:
+/// States:
+///     .disabled
+/// Styles:
+/// Layouts:
+///     .block
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast, .transparent
+
+//#endregion
+
+/// @access private
+@mixin _slider-style-thumb {
+    &::-webkit-slider-thumb {
+        @content;
+    }
+
+    &::-moz-range-thumb {
+        @content;
+    }
+
+    &::-ms-thumb {
+        @content;
+    }
+}
+
+/// @access private
+@mixin _slider-style-track {
+    &::-webkit-slider-runnable-track {
+        @content;
+    }
+
+    &::-moz-range-track {
+        @content;
+    }
+
+    &::-ms-track {
+        @content;
+    }
+}
+
+/// @access private
+@mixin _slider-style-base {
+    $transition-duration: 0.2s;
+    $track-size: 2;
+    $thumb-size: 24;
+
+    @include prefixed-properties(('webkit'), appearance, none);
+
+    background: var(--transparent-color);
+    display: block;
+    height: to-unit($thumb-size, 'px');
+    outline: none;
+    cursor: pointer;
+
+    &:hover,
+    &:active,
+    &:focus {
+        @include _slider-style-thumb {
+            box-shadow: $box-shadow-4dp;
+            transform: scale(1.25);
+        }
+    }
+
+    &:active {
+        @include _slider-style-thumb {
+            box-shadow: $box-shadow-2dp;
+        }
+    }
+
+    @include _slider-style-thumb {
+        @include transition(transform, box-shadow, $transition-duration);
+
+        background-color: var(--primary-color);
+        border: none;
+        border-radius: 50%;
+        height: to-unit($thumb-size, 'px');
+        width: to-unit($thumb-size, 'px');
+    }
+
+    &::-webkit-slider-thumb {
+        @include prefixed-properties(('webkit'), appearance, none);
+        margin-top: to-unit(-($thumb-size/2)+1, 'px');
+    }
+
+    &::-ms-fill-lower {
+        background-color: var(--primary-color);
+    }
+
+    @include _slider-style-track {
+        background-color: var(--highlight-color);
+        border-radius: to-unit($radius-factor, 'px');
+        height: to-unit($track-size, 'px');
+        width: 100%;
+    }
+
+    //#region States
+
+    &:disabled,
+    &.disabled {
+        @include _slider-style-thumb {
+            background-color: var(--disabled-color);
+            transform: scale(1);
+            box-shadow: none;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        cursor: default;
+    }
+
+    //#endregion
+
+    //#region Layouts
+
+    &.block {
+        width: 100%;
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        @include not(':disabled' '.disabled') {
+            @include _slider-style-thumb {
+                background-color: $_colorset-style-ctx;
+            }
+        }
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin slider-style($args...) {
+    @include style($args, "input[type='range']", 'slider') {
+        @include _slider-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The Small object represents an HTML <small> element.
+/// API:
+/// States:
+///     .disabled, .readonly
+/// Styles:
+/// Layouts:
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast, .transparent
+
+//#endregion
+
+/// @access private
+@mixin _small-style-base {
+    @include transition(color, 0.3s);
+    font-size: 80%;
+    color: var(--foreground-color);
+    font-family: inherit;
+
+    //#region states
+
+    &.disabled {
+        color: var(--disabled-color);
+    }
+
+    &.readonly {
+        color: var(--lowlight-color);
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        color: $_colorset-style-ctx;
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin small-style($args...) {
+    @include style($args, 'small', 'small') {
+        @include _small-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The <span> tag is used to group inline-elements in a document.
+/// The <span> tag provides no visual change by itself.
+/// The <span> tag provides a way to add a hook to a part of a text or a part of a document.
+/// API:
+/// States:
+///    .disabled, .readonly
+///    .bold, .italic, .underline, .strikeout
+/// Styles:
+/// Layouts:
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast
+
+//#endregion
+
+/// @access private
+@mixin _span-style-base {
+    @include transition(color, 0.3s);
+    font-family: inherit;
+
+    //#region States
+
+    &.bold {
+        font-weight: bold;
+    }
+
+    &.italic {
+        font-style: italic;
+    }
+
+    &.underline {
+        text-decoration: underline;
+    }
+
+    &.strikeout {
+        text-decoration: line-through;
+    }
+
+    &.disabled {
+        color: var(--disabled-color);
+    }
+
+    &.readonly {
+        color: var(--lowlight-color);
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        color: $_colorset-style-ctx;
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin span-style($args...) {
+    @include style($args, 'span', 'span') {
+        @include _span-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The Table object represents an HTML <table> element.
+/// States:
+///    .disabled, .alternating
+/// Styles:
+/// Layout:
+///     .flex
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast
+
+//#endregion
+
+/// @access private
+@mixin _table-style-base {
+    width: 100%;
+    max-width: 100%;
+    background-color: var(--background-color);
+    font-family: inherit;
+    border-spacing: 0;
+    border-collapse: collapse;
+
+    > thead,
+    > tbody,
+    > tfoot {
+        > tr {
+            @include transition(background-color, color, border-color, 0.3s);
+            border-bottom: #{$thickness-factor + 'px'} solid var(--highlight-color);
+
+            > th {
+                @include transition(background-color, color, border-color, 0.3s);
+
+                font-size: $h4;
+                text-align: left;
+                font-weight: bold;
+                padding: #{$padding-factor * 2 + 'px'};
+                color: var(--foreground-color);
+                vertical-align: bottom;
+            }
+
+            > td {
+                @include transition(background-color, color, border-color, 0.3s);
+
+                font-weight: lighter;
+                font-size: $h4;
+                text-align: left;
+                padding: #{$padding-factor * 2 + 'px'};
+                vertical-align: top;
+                color: var(--foreground-color);
+            }
+
+            &.selected {
+                > td {
+                    background-color: var(--primary-color);
+                    color: var(--contrast-color);
+                }
+            }
+        }
+    }
+
+    //#region States
+
+    &.alternating {
+        > tbody {
+            > tr {
+                &:nth-child(odd) {
+                    background-color: var(--highlight-color);
+                }
+            }
+        }
+    }
+
+    &.disabled {
+        > thead,
+        > tbody,
+        > tfoot {
+            > tr {
+                border-bottom: #{$thickness-factor + 'px'} solid var(--disabled-color);
+
+                > th,
+                > td {
+                    color: var(--disabled-color);
+                }
+            }
+        }
+    }
+
+    //#endregion
+
+    //#region Layouts
+
+    &.flex {
+        display: flex;
+        flex-flow: column nowrap;
+        height: 100%;
+
+        thead {
+            tr {
+                width: 100%;
+                display: flex;
+                flex-flow: row nowrap;
+
+                th {
+                    display: flex;
+                    flex-flow: row nowrap;
+                    flex-grow: 1;
+                    flex-basis: 0;
+                    word-break: break-word;
+                }
+            }
+        }
+
+        tbody {
+            overflow: auto;
+            display: flex;
+            flex-flow: column;
+
+            tr {
+                width: 100%;
+                display: flex;
+                flex-flow: row nowrap;
+                flex-shrink: 0;
+
+                td {
+                    display: flex;
+                    flex-flow: row nowrap;
+                    flex-grow: 1;
+                    flex-basis: 0;
+                    align-content: center;
+                    align-items: center;
+                    word-break: break-word;
+                }
+            }
+        }
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        @include not('.disabled') {
+            > thead {
+               
+
+                > tr {
+                  
+                    > th {
+                       background-color: $_colorset-style-ctx;
+                        color: var(--contrast-color);
+                    }
+                }
+            }
+        }
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin table-style($args...) {
+    @include style($args, 'table', 'tbl') {
+        @include _table-style-base;
+        @content;
+    }
+}
+
+// sass-lint:disable-block force-attribute-nesting, no-qualifying-elements, force-pseudo-nesting
+
+//#region Description
+
+/// The Textarea object represents an HTML <textarea> element.
+/// API:
+/// States:
+///     .disabled
+/// Styles:
+///     .outlined, .textual
+/// Layouts:
+///     .small, .medium, .large, .block
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast, .transparent
+
+//#endregion
+
+/// @access private
+@mixin _textarea-style-base {
+    @include transition(background-color, color, border-color, box-shadow, 0.3s);
+
+    background-color: var(--background-color);
+    border-radius: #{$radius-factor + 'px'};
+    border-width: #{$thickness-factor + 'px'};
+    border-style: solid;
+    border-color: var(--highlight-color);
+    box-shadow: none;
+    color: var(--foreground-color);
+    fill: var(--contrast-color);
+    font-family: inherit;
+    font-size: $h4;
+    height: auto;
+    line-height: 24px;
+    padding: #{($padding-factor) + 'px'};
+    outline: none;
+    text-decoration: none;
+    resize: none;
+
+    &:hover,
+    &:active,
+    &:focus {
+        border-color: var(--secondary-color);
+        box-shadow: $box-shadow-4dp;
+    }
+
+    &:disabled {
+        cursor: default;
+        background-color: var(--disabled-color);
+        border-color: var(--disabled-color);
+        border-style: solid;
+        color: var(--lowlight-color);
+
+        &:hover,
+        &:active,
+        &:focus {
+            box-shadow: none;
+        }
+    }
+
+    &:read-only {
+        @include not(':disabled') {
+            border-style: dotted;
+            border-color: var(--highlight-color);
+
+            &:hover,
+            &:active,
+            &:focus {
+                border-style: dotted;
+                border-color: var(--secondary-color);
+            }
+        }
+    }
+
+    &::selection {
+        background: var(--primary-color);
+        color: var(--contrast-color);
+    }
+
+    &::placeholder {
+        color: var(--semi-transparent-color);
+        font-style: italic;
+    }
+
+    //#region Styles
+
+    &.outlined {
+        border-style: solid;
+        border-color: var(--highlight-color);
+        border-width: to-unit($thickness-factor, 'px');
+        background-color: var(--transparent-color);
+        color: var(--primar-color);
+
+        &:hover,
+        &:active,
+        &:focus,
+        &.selected {
+            border-color: var(--secondary-color);
+            color: var(--secondary-color);
+        }
+
+        &:disabled {
+            border-color: var(--disabled-color);
+            color: var(--disabled-color);
+        }
+    }
+
+    &.textual {
+        border-color: var(--transparent-color);
+        background-color: var(--transparent-color);
+        color: var(--foreground-color);
+
+        &:hover,
+        &:active,
+        &:focus {
+            border-color: var(--transparent-color);
+            box-shadow: none;
+        }
+
+        &:disabled {
+            background-color: var(--transparent-color);
+            border-color: var(--transparent-color);
+            color: var(--disabled-color);
+        }
+    }
+
+    //#endregion
+
+    //#region Layouts
+
+    &.small {
+        padding: to-unit($padding-factor/2, 'px');
+        font-size: $h6;
+        line-height: 16px;
+        border-radius: to-unit($radius-factor, 'px');
+    }
+
+    &.medium {
+        padding: to-unit($padding-factor, 'px');
+        font-size: $h4;
+        line-height: 24px;
+        border-radius: to-unit($radius-factor, 'px');
+    }
+
+    &.large {
+        padding: to-unit($padding-factor + ($padding-factor/2), 'px');
+        font-size: $h2;
+        line-height: 32px;
+        border-radius: to-unit($radius-factor, 'px');
+    }
+
+    &.block {
+        width: 100%;
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        @include not(':disabled' '.textual') {
+            &:not(:read-only) {
+                border-color: $_colorset-style-ctx;
+            }
+
+            &:not(:-moz-read-only) {
+                border-color: $_colorset-style-ctx;
+            }
+        }
+        @include not(':disabled') {
+            &:not(:read-only) {
+                border-color: $_colorset-style-ctx;
+
+                &::placeholder {
+                    color: $_colorset-style-ctx;
+                }
+            }
+
+            &:not(:-moz-read-only) {
+                border-color: $_colorset-style-ctx;
+
+                &::placeholder {
+                    color: $_colorset-style-ctx;
+                }
+            }
+        }
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin textarea-style($args...) {
+    @include style($args, 'textarea', 'textarea') {
+        @include _textarea-style-base;
+        @content;
+    }
+}
+
+//#region Description
+
+/// The HTML <ul> element represents an unordered list of items.
+/// API:
+/// States:
+///    .disabled, .alternating
+/// Styles:
+///     .textual, .outlined
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast
+
+//#endregion
+
+/// @access private
+@mixin _unordered-list-style-base {
+    padding: 0;
+    margin: 0;
+    background-color: var(--background-color);
+    font-family: inherit;
+
+    //#region States
+
+    &.disabled {
+        cursor: default;
+        background-color: var(--highlight-color);
+        color: var(--disabled-color);
+    }
+
+    &.alternating {
+        li {
+            &:nth-child(2n) {
+                background-color: var(--semi-transparent-color);
+            }
+        }
+    }
+
+    //#endregion
+
+    //#region Styles
+
+    &.textual {
+        background-color: var(--transparent-color);
+        list-style-position: inside;
+        list-style-type: disc;
+    }
+
+    &.outlined {
+        border-radius: #{$radius-factor + 'px'};
+        border-width: #{$thickness-factor + 'px'};
+        border-style: solid;
+        border-color: var(--highlight-color);
+    }
+
+    //#endregion
+
+    //#region Colors
+
+    @include colorset-style {
+        @include not('.disabled') {
+            &.outlined {
+                border-color: $_colorset-style-ctx;
+            }
+
+            &.textual {
+                color: $_colorset-style-ctx;
+            }
+        }
+    }
+
+    //#endregion
+}
+
+//#region Description
+
+/// The HTML <li> element is used to represent an item in a list.
+/// API:
+/// States:
+///    .disabled, .selected
+/// Styles:
+///     .textual, .outlined
+/// Colors:
+///     .primary, .secondary, .success, .danger, .warning, .info, .contrast
+
+//#endregion
+
+/// @access private
+@mixin _list-item-style-base {
+    @include transition(background-color, color, border-color, 0.3s);
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: #{$padding-factor * 2 + 'px'};
+    display: block;
+    background-color: var(--background-color);
+    color: var(--foreground-color);
+    outline: none;
+    font-family: inherit;
+    cursor: pointer;
+    border-radius: #{$radius-factor + 'px'};
+    border-width: #{$thickness-factor + 'px'};
+    border-style: solid;
+    border-color: var(--transparent-color);
+
+    //#region States
+
+    &:hover {
+        @include not('.selected' '.disabled' '.outlined') {
+            background-color: var(--secondary-color);
+            color: var(--contrast-color);
+        }
+    }
+
+    &.disabled {
+        cursor: default;
+        background-color: var(--disabled-color);
+        color: var(--lowlight-color);
+    }
+
+    &.selected {
+        background-color: var(--primary-color);
+        color: var(--contrast-color);
+    }
+
+    //#endregion
+
+    &.outlined {
+        background-color: var(--transparent-color);
+        border-radius: #{$radius-factor + 'px'};
+        border-width: #{$thickness-factor + 'px'};
+        border-style: solid;
+        border-color: var(--transparent-color);
+
+        &:hover {
+            @include not('.selected' '.disabled') {
+                border-color: var(--secondary-color);
+            }
+            background-color: var(--transparent-color);
+        }
+
+        &.selected {
+            border-color: var(--primary-color);
+            color: var(--foreground-color);
+        }
+
+        &.disabled {
+            color: var(--disabled-color);
+        }
+    }
+
+    &.textual {
+        cursor: default;
+        padding: 0;
+        display: list-item;
+
+        &:hover {
+            @include not('.selected' '.disabled') {
+                background-color: var(--transparent-color);
+                color: var(--foreground-color);
+            }
+        }
+
+        &.disabled {
+            background-color: var(--transparent-color);
+            color: var(--disabled-color);
+        }
+    }
+
+    //#region Colors
+
+    @include colorset-style {
+        @include not('.disabled') {
+            &:hover {
+                @include not('.selected' '.outlined') {
+                    background-color: $_colorset-style-ctx;
+                    color: var(--contrast-color);
+                }
+            }
+
+            &.outlined {
+                border-color: $_colorset-style-ctx;
+            }
+
+            &.textual {
+                color: $_colorset-style-ctx;
+            }
+        }
+    }
+
+    //#endregion
+}
+
+/// @access public
+@mixin unordered-list-style($args...) {
+    @include style($args, 'ul', 'ul') {
+        @include _unordered-list-style-base;
+        @include style($args, 'li', 'li') {
+            @include _list-item-style-base;
+        }
+        @content;
+    }
+}
+
+//#region Mixins
+
+/// @access public
+/// @group Fonts
+/// @requires {mixin} _font-style
+///
+@mixin default-font-style {
+    @include _font-style('https://fonts.googleapis.com/css?family=Roboto:400,500,700,900&display=swap', "'Roboto'", "'Helvetica Neue' 'Arial' sans-serif");
+}
+
+//#endregion

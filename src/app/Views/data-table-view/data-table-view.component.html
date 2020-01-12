@@ -1,6 +1,6 @@
 <!-- https://stackblitz.com/edit/angular-igmugp?file=src%2Fapp%2Fapp.module.ts -->
-  <table mat-table #table [dataSource]="this.dataSource"
-  cdkDropList
+  <table class="default-tbl alternating primary" mat-table #table [dataSource]="this.dataSource"
+  cdkDropList matSort 
   [cdkDropListData]="dataSource"
   (cdkDropListDropped)="dropTable($event)">
 
@@ -9,7 +9,7 @@
 
   <!-- Position Column -->
   <ng-container matColumnDef="position">
-    <th mat-header-cell *matHeaderCellDef> No. </th>
+    <th mat-header-cell mat-sort-header *matHeaderCellDef> No. </th>
     <td mat-cell *matCellDef="let element">
       <mat-icon cdkDragHandle>reorder</mat-icon>
     </td>
@@ -17,22 +17,22 @@
 
   <!-- title Column -->
   <ng-container matColumnDef="title">
-    <th mat-header-cell *matHeaderCellDef> Title </th>
+    <th mat-header-cell mat-sort-header *matHeaderCellDef> Title </th>
     <td mat-cell *matCellDef="let element"> {{element.title}} </td>
   </ng-container>
 
   <!-- src Column -->
   <ng-container matColumnDef="src">
-    <th mat-header-cell *matHeaderCellDef> Src </th>
+    <th mat-header-cell mat-sort-header *matHeaderCellDef> Src </th>
     <td mat-cell *matCellDef="let element"> {{element.src}} </td>
   </ng-container>
 
   <!-- attributes Column -->
   <ng-container matColumnDef="attributes">
-    <th mat-header-cell *matHeaderCellDef> Attributes </th>
+    <th mat-header-cell mat-sort-header *matHeaderCellDef> Attributes </th>
     <td mat-cell *matCellDef="let element"> {{element.attributes}} </td>
   </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag [cdkDragData]="row"></tr>
+  <tr mat-header-row *matHeaderRowDef="dataSourceColumns; sticky: true"></tr>
+  <tr mat-row *matRowDef="let row; columns: dataSourceColumns;" cdkDrag [cdkDragData]="row"></tr>
 </table>
