@@ -1,8 +1,7 @@
-  
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { FileHandler, FileAs } from "./Services/FileService";
 import { M3uService } from "./Services/M3uService";
-import {DataTableViewComponent} from './Views/data-table-view/data-table-view.component'
+import { DataTableViewComponent } from "./Views/data-table-view/data-table-view.component";
 import { TableNormalizer } from "./Services/TableNormalizer";
 
 @Component({
@@ -11,7 +10,6 @@ import { TableNormalizer } from "./Services/TableNormalizer";
   styleUrls: ["./app.component.css"]
 })
 export class AppComponent {
-
   @ViewChild(DataTableViewComponent, { static: true })
   dataTableView: DataTableViewComponent;
 
@@ -19,15 +17,14 @@ export class AppComponent {
     if (files && files.length) {
       const [file] = files;
 
-TableNormalizer.
-      FileHandler.read(file, FileAs.text).then((content) => {
-        M3uService.parse(content.toString()).then((data) => {
-          
-          this.dataTableView.setDataSource(data.entries)
+
+      FileHandler.read(file, FileAs.text).then(content => {
+        new M3uService().parse(content.toString()).then(data => {
+          const normalizeData = new TableNormalizer().normalize(data.entries)
+
+          this.dataTableView.setDataSource(normalizeData);
         });
       });
     }
   }
-
-
 }

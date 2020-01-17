@@ -33,13 +33,17 @@ export class DataTableViewComponent {
   @ViewChild(MatSort, { static: true })
   sort: MatSort;
 
-  dataSourceColumns: string[] = ['select',"title", "src", "attributes"];
+  dataSourceColumns: string[] = [];
 
   dataSource: MatTableDataSource<M3UEntry>;
 
    selection = new SelectionModel<M3UEntry>(true, []);
 
-  setDataSource(data: Array<any>): void {
+  setDataSource(data: Array<unknown>): void {
+    Object.keys(data[0]).forEach(x => {
+      this.dataSourceColumns.push(x as any);
+    })
+
     this.dataSource = new MatTableDataSource(data);
     this.dataSource.sort = this.sort;
     this.dataSource.sortingDataAccessor = (

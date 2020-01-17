@@ -8,8 +8,7 @@ export class M3uService {
   private static EXTALB = "#EXTALB";
   private static EXTART = "#EXTART";
 
-
-  public static parse(content: string): Promise<M3U> {
+  public parse(content: string): Promise<M3U> {
     return new Promise<M3U>(
       (resolve, reject): any => {
         const m3u = new M3U();
@@ -113,4 +112,9 @@ export class M3uService {
       }
     );
   }
+
+  public save(m3u: M3U) : Promise<void>{
+    throw new Error('NOT IMPLEMENTED');
+  }
+
 }
