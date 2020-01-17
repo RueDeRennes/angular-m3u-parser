@@ -8,51 +8,8 @@ export class M3uService {
   private static EXTALB = "#EXTALB";
   private static EXTART = "#EXTART";
 
-  public static parse(content: string): M3U {
-    const m3u = new M3U();
-    let entry: M3UEntry = null;
 
-    const lines = content.trim().split("\n");
-
-    lines.forEach((line, index) => {
-      if (index === 0 && line != this.EXTM3U) {
-        throw new Error("M3U header is missing.");
-      }
-
-      if (line.startsWith(this.EXTINF)) {
-        if (entry !== null) {
-          throw new Error("Unexpected entry detected.");
-        }
-        var split = line.substring(8, line.length).split(",", 2);
-
-        if (split.length != 2) {
-          throw new Error(
-            `Invalid track information @ line ${index + 1}.\rResult: ${
-              split.length
-            }`
-          );
-        }
-
-        let seconds: number;
-        if (Number.parseInt(split[0]) === Number.NaN) {
-          throw new Error("Invalid track duration.");
-        }
-
-        const title = split[1];
-        const duration = Number.parseInt(split[0]);
-
-        entry = new M3UEntry({ duration, title });
-      } else if (entry !== null && !line.startsWith("#")) {
-        entry.src = line;
-        m3u.entries.push(entry);
-        entry = null;
-      }
-    });
-
-    return m3u;
-  }
-
-  public static parse2(content: string): Promise<M3U> {
+  public static parse(content: string): Promise<M3U> {
     return new Promise<M3U>(
       (resolve, reject): any => {
         const m3u = new M3U();
@@ -94,14 +51,11 @@ export class M3uService {
             let attrName: string = "";
             let beginAttrNameIndex: number = 0;
             let endAttrNameIndex: number = 0;
-
             let attrValue: string = "";
             let beginAttrValueIndex: number = 0;
             let endAttrValueIndex: number = 0;
-
             let currentChar: string;
             let quoteCounter: number = 0;
-
             let isCurrentIndexInAttrName: boolean = false;
             let isCurrentIndexInAttrValue: boolean = false;
 
@@ -112,7 +66,7 @@ export class M3uService {
                 //attribute value start
                 if (quoteCounter === 0) {
                   isCurrentIndexInAttrValue = true;
-                  beginAttrValueIndex = i + 1;
+                 
                   quoteCounter++;
                 } else if (quoteCounter === 1) {
                   //end of attribute value
@@ -148,10 +102,6 @@ export class M3uService {
                 // continue building attribute value
                 attrValue = attrValue.concat(...currentChar);
               }
-              /*
-    #EXTINF:-1 tvg-id="" tvg-name="" tvg-language="Pashto" tvg-logo="https://i.imgur.com/S1DfLSr.png" tvg-country="AF" tvg-url="" group-title="Afghanistan",Arezo TV
-    http://173.208.166.179/afg_ar_tv_789-456-dont_copy_my_links-mother-fucker-kona-werakawa/tracks-v1a1/mono.m3u8
-                        */
             }
           } else if (entry !== null && !line.startsWith("#")) {
             entry.src = line;
