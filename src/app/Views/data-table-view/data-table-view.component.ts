@@ -19,7 +19,7 @@ import { MatTable } from "@angular/material/table";
 import { M3UEntry } from "../../Models/Models";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
-import {SelectionModel} from '@angular/cdk/collections';
+import { SelectionModel } from "@angular/cdk/collections";
 
 @Component({
   selector: "app-data-table-view",
@@ -33,30 +33,34 @@ export class DataTableViewComponent {
   @ViewChild(MatSort, { static: true })
   sort: MatSort;
 
-  dataSourceColumns: string[] = [];
+  dataSourceColumns: string[] = ['src'];
 
   dataSource: MatTableDataSource<M3UEntry>;
 
-   selection = new SelectionModel<M3UEntry>(true, []);
+  selection = new SelectionModel<M3UEntry>(true, []);
 
   setDataSource(data: Array<unknown>): void {
     Object.keys(data[0]).forEach(x => {
       this.dataSourceColumns.push(x as any);
-    })
+    });
 
-    this.dataSource = new MatTableDataSource(data);
-    this.dataSource.sort = this.sort;
-    this.dataSource.sortingDataAccessor = (
-      data: object,
-      sortHeaderId: string
-    ): string | number => {
-      const propPath = sortHeaderId.split(".");
-      const value: any = propPath.reduce(
-        (curObj, property) => curObj[property],
-        data
-      );
-      return !isNaN(value) ? Number(value) : value;
-    };
+  // setTimeout(() => {
+  //     this.dataSource = new MatTableDataSource(data);
+  //   this.dataSource.sort = this.sort;
+  //   this.dataSource.sortingDataAccessor = (
+  //     data: object,
+  //     sortHeaderId: string
+  //   ): string | number => {
+  //     const propPath = sortHeaderId.split(".");
+  //     const value: any = propPath.reduce(
+  //       (curObj, property) => curObj[property],
+  //       data
+  //     );
+  //     return !isNaN(value) ? Number(value) : value;
+  //   };
+  // })
+
+    //this.table.renderRows();
   }
 
   applyFilter(filterValue: string) {
