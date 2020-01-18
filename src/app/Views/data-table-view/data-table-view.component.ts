@@ -33,34 +33,34 @@ export class DataTableViewComponent {
   @ViewChild(MatSort, { static: true })
   sort: MatSort;
 
-  dataSourceColumns: string[] = ['src'];
+  dataSourceColumns: string[] = ['src', 'title', 'duration'];
 
   dataSource: MatTableDataSource<M3UEntry>;
 
   selection = new SelectionModel<M3UEntry>(true, []);
 
   setDataSource(data: Array<unknown>): void {
-    Object.keys(data[0]).forEach(x => {
-      this.dataSourceColumns.push(x as any);
-    });
+    console.log(data);
+    // Object.keys(data[0]).forEach(x => {
+    //   this.dataSourceColumns.push(x as any);
+    // });
 
-  // setTimeout(() => {
-  //     this.dataSource = new MatTableDataSource(data);
-  //   this.dataSource.sort = this.sort;
-  //   this.dataSource.sortingDataAccessor = (
-  //     data: object,
-  //     sortHeaderId: string
-  //   ): string | number => {
-  //     const propPath = sortHeaderId.split(".");
-  //     const value: any = propPath.reduce(
-  //       (curObj, property) => curObj[property],
-  //       data
-  //     );
-  //     return !isNaN(value) ? Number(value) : value;
-  //   };
-  // })
+//  setTimeout(() => {
+//      this.dataSource = new MatTableDataSource(data);
+//    this.dataSource.sort = this.sort;
+//    this.dataSource.sortingDataAccessor = (
+//      data: object,
+//      sortHeaderId: string
+//    ): string | number => {
+//      const propPath = sortHeaderId.split(".");
+//      const value: any = propPath.reduce(
+//        (curObj, property) => curObj[property],
+//        data
+//      );
+//      return !isNaN(value) ? Number(value) : value;
+//    };
+//  })
 
-    //this.table.renderRows();
   }
 
   applyFilter(filterValue: string) {
