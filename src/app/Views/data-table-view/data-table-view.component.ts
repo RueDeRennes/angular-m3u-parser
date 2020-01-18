@@ -33,7 +33,7 @@ export class DataTableViewComponent {
   @ViewChild(MatSort, { static: true })
   sort: MatSort;
 
-  dataSourceColumns: string[] = ['src', 'title', 'duration'];
+  dataSourceColumns: string[] = [];
 
   dataSource: MatTableDataSource<M3UEntry>;
 
@@ -41,26 +41,25 @@ export class DataTableViewComponent {
 
   setDataSource(data: Array<unknown>): void {
     console.log(data);
-    // Object.keys(data[0]).forEach(x => {
-    //   this.dataSourceColumns.push(x as any);
-    // });
+    Object.keys(data[0]).forEach(x => {
+      this.dataSourceColumns.push(x as any);
+    });
 
-//  setTimeout(() => {
-//      this.dataSource = new MatTableDataSource(data);
-//    this.dataSource.sort = this.sort;
-//    this.dataSource.sortingDataAccessor = (
-//      data: object,
-//      sortHeaderId: string
-//    ): string | number => {
-//      const propPath = sortHeaderId.split(".");
-//      const value: any = propPath.reduce(
-//        (curObj, property) => curObj[property],
-//        data
-//      );
-//      return !isNaN(value) ? Number(value) : value;
-//    };
-//  })
-
+    setTimeout(() => {
+      this.dataSource = new MatTableDataSource(data);
+      this.dataSource.sort = this.sort;
+      this.dataSource.sortingDataAccessor = (
+        data: object,
+        sortHeaderId: string
+      ): string | number => {
+        const propPath = sortHeaderId.split(".");
+        const value: any = propPath.reduce(
+          (curObj, property) => curObj[property],
+          data
+        );
+        return !isNaN(value) ? Number(value) : value;
+      };
+    });
   }
 
   applyFilter(filterValue: string) {
