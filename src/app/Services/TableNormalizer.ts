@@ -24,10 +24,13 @@ export class TableNormalizer {
     // find a why to store the object schema.
     const schema = new TableSchema(Unique.new(), this.createSchema(data));
 
+
     if (Array.isArray(data)) {
-      return data.map(x => this.toFlat(data));
+      const result = data.map(x => this.toFlat(data));
+      return result;
     } else {
-      return this.toFlat(data);
+      const result = this.toFlat(data);
+      return result;
     }
   }
 

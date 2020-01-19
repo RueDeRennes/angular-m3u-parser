@@ -17,11 +17,9 @@ export class AppComponent {
     if (files && files.length) {
       const [file] = files;
 
-
       FileHandler.read(file, FileAs.text).then(content => {
         new M3uService().parse(content.toString()).then(data => {
           const normalizeData = new TableNormalizer().normalize(data.entries)
-
           this.dataTableView.setDataSource(normalizeData);
         });
       });
