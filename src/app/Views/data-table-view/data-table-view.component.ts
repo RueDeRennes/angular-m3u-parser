@@ -24,7 +24,7 @@ import { SelectionModel } from "@angular/cdk/collections";
 @Component({
   selector: "app-data-table-view",
   templateUrl: "./data-table-view.component.html",
-  styleUrls: ["./data-table-view.component.css"]
+  styleUrls: ["./data-table-view.component.scss"]
 })
 export class DataTableViewComponent {
   @ViewChild("table", { static: true })
@@ -33,17 +33,15 @@ export class DataTableViewComponent {
   @ViewChild(MatSort, { static: true })
   sort: MatSort;
 
-  dataSourceColumns: string[] = [];
+  columns = [];
 
-  dataSource: MatTableDataSource<M3UEntry>;
+  displayedColumns = [];
 
-  selection = new SelectionModel<M3UEntry>(true, []);
+  dataSource = null;
 
   setDataSource(data: Array<unknown>): void {
     console.log(data);
-    Object.keys(data[0]).forEach(x => {
-      this.dataSourceColumns.push(x as any);
-    });
+    this.setColumns(data);
 
     setTimeout(() => {
       this.dataSource = new MatTableDataSource(data);
@@ -62,31 +60,23 @@ export class DataTableViewComponent {
     });
   }
 
+  setColumns(data: Array<unknown>): void {
+    Object.keys(data[0]).forEach(x => {
+      const col = {
+        columnDef: x,
+        header: x,
+        cell: (element: any) => `${element[x]}`,
+        visible: true
+      };
+      this.columns.push(col);
+    });
+
+    this.displayedColumns = this.columns.map(c => c.columnDef);
+  }
+
   applyFilter(filterValue: string) {
     setTimeout(() => {
       this.dataSource.filter = filterValue.trim().toLowerCase();
     }, 200);
-  }
-
-  dropTable(event: CdkDragDrop<Array<M3UEntry>>) {
-    const prevIndex = this.dataSource.data.findIndex(
-      d => d === event.item.data
-    );
-    moveItemInArray(this.dataSource.data, prevIndex, event.currentIndex);
-    this.table.renderRows();
-  }
-
-  /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected == numRows;
-  }
-
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    this.isAllSelected()
-      ? this.selection.clear()
-      : this.dataSource.data.forEach(row => this.selection.select(row));
   }
 }

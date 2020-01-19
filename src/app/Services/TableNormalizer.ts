@@ -42,9 +42,9 @@ export class TableNormalizer {
         return [].concat(
           ...Object.keys(x).map(k => {
             // Convert trainCase to camelCase
-            k = k.replace(/-([a-z])/g, g => {
-              return g[1].toUpperCase();
-            });
+            // k = k.replace(/-([a-z])/g, g => {
+            //   return g[1].toUpperCase();
+            // });
             return typeof x[k] === "object" ? flatten(x[k]) : { [k]: x[k] };
           })
         );
