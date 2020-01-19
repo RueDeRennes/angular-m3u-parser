@@ -11,3 +11,9 @@
 .column-container {
   background-color: var(--highlight-color);
 }
+
+.mat-cell {
+  &.empty {
+    background-color: var(--danger-color);
+  }
+}

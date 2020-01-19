@@ -583,6 +583,7 @@ $default-theme-name: 'default';
     letter-spacing: -0.1px;
     background-color: var(--background-color);
     color: var(--foreground-color);
+    margin: 0;
 }
 
 /// @access public
@@ -1028,6 +1029,7 @@ $default-theme-name: 'default';
         min-height: 24px;
         font-size: $h4;
         color: var(--foreground-color);
+        white-space: nowrap;
 
         &::after {
             @include transition(background-color, color, border-color, box-shadow, 0.3s);
@@ -1063,7 +1065,7 @@ $default-theme-name: 'default';
         &::before {
             content: '';
             position: absolute;
-            top: 2px;
+            top: 4px;
             left: 8px;
             width: 8px;
             height: 14px;
@@ -2623,6 +2625,8 @@ $default-theme-name: 'default';
         line-height: 24px;
         min-height: 24px;
         font-size: $h4;
+        color: var(--foreground-color);
+        white-space: nowrap;
 
         &::after {
             @include transition(background-color, color, border-color, box-shadow, 0.3s);

@@ -39,6 +39,8 @@ export class DataTableViewComponent {
 
   dataSource = null;
 
+  highlightEmptyCells = false;
+
   setDataSource(data: Array<unknown>): void {
     this.setColumns(data);
 
@@ -60,22 +62,41 @@ export class DataTableViewComponent {
   }
 
   setColumns(data: Array<unknown>): void {
+    // clear anything
+    this.columns.splice(0,this.columns.length)
+    this.displayedColumns.splice(0,this.displayedColumns.length)
+
     Object.keys(data[0]).forEach(x => {
-      const col = {
+      this.columns.push({
         columnDef: x,
         header: x,
         cell: (element: any) => `${element[x]}`,
+        empty: (element: any) => {
+          if (this.highlightEmptyCells) {
+            return element[x] ? false : true;
+          } else {
+            return false;
+          }
+        },
         visible: true
-      };
-      this.columns.push(col);
+      });
     });
 
-    this.displayedColumns = this.columns.filter(x => x.visible).map(c => c.columnDef);
+    this.displayedColumns = this.columns
+      .filter(x => x.visible)
+      .map(c => c.columnDef);
   }
 
   applyFilter(filterValue: string) {
     setTimeout(() => {
       this.dataSource.filter = filterValue.trim().toLowerCase();
     }, 200);
+  }
+
+  applyColumn(column: any, visible: boolean) {
+    column.visible = visible;
+
+    console.log("column visibility was changed");
+    console.log(this.columns);
   }
 }
