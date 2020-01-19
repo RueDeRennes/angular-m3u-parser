@@ -4,8 +4,7 @@
 @import './styles/mosaik.presentation.default';
 
 @include dark-scheme-style(#0082BB, #18A957, #F0A323, #DF1642);
-
-@include _accent-style('crane', #5D1059, #E30425); // Crane Style
+@include yellow-accent-style();
 
 @include _font-style('https://fonts.googleapis.com/css?family=Open+Sans:400,500,700,900&display=swap', "'Open Sans'", "sans-serif");
 @include _font-style('https://fonts.googleapis.com/icon?family=Material+Icons', "'Material Icons'", '', 'material-icons');

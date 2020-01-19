@@ -65,7 +65,7 @@ export class M3uService {
                 //attribute value start
                 if (quoteCounter === 0) {
                   isCurrentIndexInAttrValue = true;
-                 
+
                   quoteCounter++;
                 } else if (quoteCounter === 1) {
                   //end of attribute value
@@ -113,8 +113,37 @@ export class M3uService {
     );
   }
 
-  public save(m3u: M3U) : Promise<void>{
-    throw new Error('NOT IMPLEMENTED');
+  public save(m3u: M3U): Promise<void> {
+    throw new Error("NOT IMPLEMENTED");
+  }
+}
+
+// ######################## new stuff?
+class M3uReader {
+  public read(content: string): Promise<M3U> {
+    throw new Error("NOT IMPLEMENTED");
+  }
+}
+class M3uWriter {
+  public write(m3u: any): Promise<string> {
+    throw new Error("NOT IMPLEMENTED");
+  }
+}
+
+class M3uParser {
+  private readonly _reader: M3uReader;
+  private readonly _writer: M3uWriter;
+
+  public constructor() {
+    this._reader = new M3uReader();
+    this._writer = new M3uWriter();
   }
 
+  public get reader(): M3uReader {
+    return this._reader;
+  }
+
+  public get writer(): M3uWriter {
+    return this._writer;
+  }
 }
