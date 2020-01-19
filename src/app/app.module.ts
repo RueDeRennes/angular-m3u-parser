@@ -2,7 +2,6 @@ import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule } from "@angular/forms";
 import { AppComponent } from "./app.component";
-import { HelloComponent } from "./hello.component";
 import { DataTableViewComponent } from "./Views/data-table-view/data-table-view.component";
 import { MatTableModule, MatIconModule } from "@angular/material";
 import { DragDropModule } from "@angular/cdk/drag-drop";
@@ -19,7 +18,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatSortModule,
     BrowserAnimationsModule
   ],
-  declarations: [AppComponent, HelloComponent, DataTableViewComponent],
+  declarations: [AppComponent, DataTableViewComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

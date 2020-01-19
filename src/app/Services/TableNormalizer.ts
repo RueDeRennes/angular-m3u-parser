@@ -20,18 +20,21 @@ class TableSchema {
 export class TableNormalizer {
   private readonly _cache: Array<TableSchema>;
 
-  public normalize<T extends Object>(data: T | Array<T>): T | Array<T> {
+  public normalize<T extends Object>(
+    data: T | Array<T>
+  ): Promise<T | Array<T>> {
     // find a why to store the object schema.
     const schema = new TableSchema(Unique.new(), this.createSchema(data));
 
-
-    if (Array.isArray(data)) {
-      const result = data.map(x => this.toFlat(data));
-      return result;
-    } else {
-      const result = this.toFlat(data);
-      return result;
-    }
+    return new Promise((resolve, reject) => {
+      if (Array.isArray(data)) {
+        const result = data.map(x => this.toFlat(x));
+        resolve(result);
+      } else {
+        const result = this.toFlat(data);
+        resolve(result);
+      }
+    });
   }
 
   public denormalize<T>(data: T): void {
