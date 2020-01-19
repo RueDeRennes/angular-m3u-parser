@@ -40,7 +40,6 @@ export class DataTableViewComponent {
   dataSource = null;
 
   setDataSource(data: Array<unknown>): void {
-    console.log(data);
     this.setColumns(data);
 
     setTimeout(() => {
@@ -71,7 +70,7 @@ export class DataTableViewComponent {
       this.columns.push(col);
     });
 
-    this.displayedColumns = this.columns.map(c => c.columnDef);
+    this.displayedColumns = this.columns.filter(x => x.visible).map(c => c.columnDef);
   }
 
   applyFilter(filterValue: string) {

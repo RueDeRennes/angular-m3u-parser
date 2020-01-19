@@ -1,9 +1,3 @@
-//#region Variables
-
-$fade-offset: 24px;
-
-//#endregion
-
 //#region Description
 
 /// The animation class defines common animation styles.
@@ -24,12 +18,35 @@ $fade-offset: 24px;
 
 //#endregion
 
+//#region Variables
+
+$fade-offset: 24px;
+
+/// @require {Number} $animation-duration
+$animation-duration-map: (
+    'faster': #{$animation-duration}ms,
+    'fast': #{$animation-duration * 2}ms,
+    'normal': #{($animation-duration * 2) * 2}ms,
+    'slow': #{(($animation-duration * 2) * 2) * 2}ms,
+    'slower': #{((($animation-duration * 2) * 2) * 2) * 2}ms
+);
+
+/// @require {Number} $animation-delay
+$animation-delay-map: (
+    'faster': #{$animation-delay}ms,
+    'fast': #{$animation-delay * 2}ms,
+    'normal': #{($animation-delay * 2) * 2}ms,
+    'slow': #{(($animation-delay * 2) * 2) * 2}ms,
+    'slower': #{((($animation-delay * 2) * 2) * 2) * 2}ms
+);
+
+//#endregion
+
 //#region Mixins
 
 /// @access public
-/// @group Layout
-///#
-@mixin animations-style() {
+/// @group Animations
+@mixin animations-style {
     .animation {
         //#region Fade
 
@@ -823,283 +840,21 @@ $fade-offset: 24px;
             animation-iteration-count: infinite;
         }
 
-        // duration: 300ms
-        &.duration-faster {
-            @include prefixed-properties(('webkit'), animation-duration, #{$animation-duration}ms);
+        @each $key, $value in $animation-duration-map {
+            &.duration-#{$key} {
+                @include prefixed-properties(('webkit'), animation-duration, #{$value});
+            }
         }
 
-        // duration: 600ms
-        &.duration-fast {
-            @include prefixed-properties(('webkit'), animation-duration, #{($animation-duration * 2)}ms);
-        }
-
-        // duration: 1200ms
-        &.duration-normal {
-            @include prefixed-properties(('webkit'), animation-duration, #{(($animation-duration * 2) * 2)}ms);
-        }
-
-        // duration: 2400ms
-        &.duration-slow {
-            @include prefixed-properties(('webkit'), animation-duration, #{((($animation-duration * 2) * 2) * 2)}ms);
-        }
-
-        // duration: 4800ms
-        &.duration-slower {
-            @include prefixed-properties(('webkit'), animation-duration, #{(((($animation-duration * 2) * 2) * 2) * 2)}ms);
-        }
-
-        // delay: 300ms
-        &.delay-faster {
-            @include prefixed-properties(('webkit'), animation-delay, #{$animation-duration}ms);
-        }
-
-        // delay: 600ms
-        &.delay-fast {
-            @include prefixed-properties(('webkit'), animation-delay, #{($animation-duration * 2)}ms);
-        }
-
-        // delay: 1200ms
-        &.delay-normal {
-            @include prefixed-properties(('webkit'), animation-delay, #{(($animation-duration * 2) * 2)}ms);
-        }
-
-        // delay: 2400ms
-        &.delay-slow {
-            @include prefixed-properties(('webkit'), animation-delay, #{((($animation-duration * 2) * 2) * 2)}ms);
-        }
-
-        // delay: 4800ms
-        &.delay-slower {
-            @include prefixed-properties(('webkit'), animation-delay, #{(((($animation-duration * 2) * 2) * 2) * 2)}ms);
+        @each $key, $value in $animation-delay-map {
+            &.delay-#{$key} {
+                @include prefixed-properties(('webkit'), animation-delay, #{$value});
+            }
         }
     }
 }
 
 //#endregion
-
-/// @access public
-/// @group Layout
-///
-@mixin border-style {
-    .no-border,
-    .no-b {
-        border: none;
-    }
-
-    .no-border-radius,
-    .no-br {
-        border-radius: 0;
-    }
-
-    @for $i from 1 through 12 {
-        .border-radius-#{$i * 1},
-        .br-#{$i * 1} {
-            border-radius: #{$i * 1 + 'px'};
-        }
-    }
-}
-
-// @see https://gist.github.com/gisu/04e7ff0aed986c2c1f18c934cc9e8382#file-_cssgrid-scss
-
-// ===================================================
-// CSS Grid Layout Helper
-//
-// To convert some of the CSS Grid Spec 2 features to Spec 1
-//
-// Author: Sascha Fuchs
-//
-// ===================================================
-
-/// Add Gap between the boxes
-///
-/// @group core - cssgrid
-///
-/// @param   {list}    $boxes - List with box sizes
-/// @param   {string}  $gap - Optional column gap
-@function box-gap($boxes, $gap) {
-    $box: ();
-
-    @for $i from 1 through length($boxes) {
-        $box: append($box, nth($boxes, $i), space);
-
-        // Adding Gap Between
-        @if $gap > 0 {
-            // Not last Loop
-            @if $i != length($boxes) {
-                $box: append($box, $gap, space);
-            }
-        }
-    }
-
-    @return $box;
-}
-
-/// To build Grid Template Columns with optional gap
-///
-/// @group core - cssgrid
-///
-/// @param   {string}  $gap - Optional column gap
-/// @param   {list}    $columns - Columns sizes
-///
-/// @require {function} box-gap
-///
-/// @example scss - scss
-///   .test {
-///     @include grid-columns(10px 250px 1fr 50px 100px);
-///   }
-@mixin grid-columns($gap, $columns) {
-    /* autoprefixer: off */
-    grid-template-columns: $columns;
-    /* autoprefixer: on */
-    @if $gap > 0 {
-        grid-column-gap: $gap;
-    }
-
-    .old-grid-spec & {
-        -ms-grid-columns: box-gap($columns, $gap);
-    }
-}
-
-/// To build Grid Template Rows with optional gap
-///
-/// @group core - cssgrid
-///
-/// @param   {string}  $gap - Optional row gap
-/// @param   {list}    $rows - Rows sizes
-///
-/// @require {function} box-gap
-///
-/// @example scss - scss
-///   .test {
-///     @include grid-rows(10px 1fr);
-///   }
-@mixin grid-rows($gap, $rows) {
-    /* autoprefixer: off */
-    grid-template-rows: $rows;
-    /* autoprefixer: on */
-    @if $gap > 0 {
-        grid-row-gap: $gap;
-    }
-
-    .old-grid-spec & {
-        -ms-grid-rows: box-gap($rows, $gap);
-    }
-}
-
-/// Generate a Grid Template Area from a Grid Map
-///
-/// @group core - cssgrid
-///
-/// @param   {string}  $area - Name of the Area
-/// @param   {map}     $map - Map of your grid area matrix
-///
-/// @example scss - scss
-///    $gridAreaMap: (
-///      row1: ('logo', 'nav', 'nav', 'nav'),
-///      row2: ('logo', 'empty', 'search', 'search')
-///    );
-///    @include grid-matrix($gridAreaMap);
-@mixin grid-matrix($map) {
-    $matrix: ();
-
-    @each $index, $row in $map {
-        $list: null;
-
-        @for $i from 1 through length($row) {
-            $list: append($list, unquote(nth(($row), $i)), space);
-        }
-
-        $matrix: append($matrix, quote($list), space);
-    }
-
-    grid-template-areas: $matrix;
-}
-
-/// Generate Coordinates based on Grid Matrix and the selected area
-///
-/// @group core - cssgrid
-///
-/// @param   {string}  $area - Name of the Area
-/// @param   {map}     $map - Map of your grid area matrix
-/// @param   {bool}    $columnGap - If you use Gap for Columns
-/// @param   {bool}    $rowGap - If you use Gap for Rows
-///
-/// @example scss - scss
-///    $gridAreaMap: (
-///      row1: ('logo', 'nav', 'nav', 'nav'),
-///      row2: ('logo', 'empty', 'search', 'search')
-///    );
-///    @include grid-area(logo, $gridAreaMap, true);
-@mixin grid-area($area, $map, $columnGap: false, $rowGap: false) {
-    // Init Vars
-    $gridColumnStart: '';
-    $gridColumnEnd: '';
-    $gridRows: ();
-    $gridRowHeight: '';
-    $areaExists: 0;
-
-    // Output regular Area
-    grid-area: $area;
-
-    // Generate Old Spec Coordinates based on Area
-    .old-grid-spec & {
-        // Get Width element
-        @for $i from 1 through length($map) {
-            @if sl-contain(map-get($map, row#{$i}), $area) {
-                $areaExists: append($areaExists, 1);
-                $gridRowHeight: append($gridRowHeight, $i);
-                $gridColumnStart: index(map-get($map, row#{$i}), $area);
-                $gridColumnEnd: sl-last-index(map-get($map, row#{$i}), $area);
-                $gridRows: append($gridRows, $i);
-            }
-        }
-
-        // If Area exists in the Map
-        @if length($areaExists) > 1 {
-            // Convert Coordinate if Column Gap is active
-            @if $columnGap {
-                -ms-grid-column: $gridColumnStart + ($gridColumnStart - 1);
-                -ms-grid-column-span: $gridColumnEnd - $gridColumnStart + 1 + ($gridColumnEnd - $gridColumnStart);
-            } @else {
-                -ms-grid-column: $gridColumnStart;
-                -ms-grid-column-span: $gridColumnEnd - $gridColumnStart + 1;
-            }
-
-            // Add Row Coordinates
-            @if $rowGap {
-                -ms-grid-row: nth($gridRows, 1) + (nth($gridRows, 1) - 1);
-                -ms-grid-row-span: length($gridRowHeight) - 1 + (length($gridRowHeight) - 2);
-            } @else {
-                -ms-grid-row: nth($gridRows, 1);
-                -ms-grid-row-span: length($gridRowHeight) - 1;
-            }
-        }
-    }
-}
-
-/// @access public
-/// @group Layout
-///
-@mixin cursor-style {
-    @each $cursor in ('alias' 'all-scroll' 'auto' 'cell' 'context-menu' 'col-resize' 'copy' 'crosshair' 'default' 'e-resize' 'ew-resize' 'grab' 'grabbing' 'help' 'move' 'n-resize' 'ne-resize' 'nesw-resize' 'ns-resize' 'nw-resize' 'nwse-resize' 'no-drop' 'none' 'not-allowed' 'pointer' 'progress' 'row-resize' 's-resize' 'se-resize' 'sw-resize' 'text' 'vertical-text' 'w-resize' 'wait' 'zoom-in' 'zoom-out' 'initial' 'inherit') {
-        .cursor-#{$cursor},
-        .cur-#{$cursor} {
-            cursor: #{$cursor};
-        }
-    }
-}
-
-/// @access public
-/// @group Layout
-///
-@mixin display-style {
-    @each $display in ('block' 'flex' 'inline-block' 'inline' 'none' 'table') {
-        .display-#{$display},
-        .dis-#{$display} {
-            display: #{$display};
-        }
-    }
-}
 
 //  Responsive attributes
 //  @see: https://github.com/angular/material/blob/master/src/core/style/layout.scss
@@ -1138,7 +893,8 @@ $layout-breakpoint-lg: 1920px !default;
 
 //#region Mixins
 
-@mixin flex-order-for-name($sizes: null) {
+/// @access private
+@mixin _flex-order-for-name($sizes: null) {
     @if $sizes == null {
         $sizes: '';
 
@@ -1165,7 +921,8 @@ $layout-breakpoint-lg: 1920px !default;
     }
 }
 
-@mixin offset-for-name($sizes: null) {
+/// @access private
+@mixin _offset-for-name($sizes: null) {
     @if $sizes == null {
         $sizes: '';
     }
@@ -1223,7 +980,8 @@ $layout-breakpoint-lg: 1920px !default;
     }
 }
 
-@mixin layout-for-name($name: null) {
+/// @access private
+@mixin _layout-for-name($name: null) {
     @if $name == null {
         $name: '';
     }
@@ -1251,7 +1009,8 @@ $layout-breakpoint-lg: 1920px !default;
     }
 }
 
-@mixin flex-properties-for-name($name: null) {
+/// @access private
+@mixin _flex-properties-for-name($name: null) {
     $flex-name: 'flex';
 
     @if $name != null {
@@ -1341,7 +1100,7 @@ $layout-breakpoint-lg: 1920px !default;
             max-height: #{$value};
             box-sizing: border-box;
             // Required by Chrome M48+ due to http://crbug.com/546034
-            @if $i==0 {
+            @if $i == 0 {
                 min-height: 0;
             }
         }
@@ -1437,14 +1196,15 @@ $layout-breakpoint-lg: 1920px !default;
     }
 }
 
-@mixin layout-align-for-name($suffix: null) {
+/// @access private
+@mixin _layout-align-for-name($suffix: null) {
     // Alignment attributes for layout containers' children
     // Arrange on the Main Axis
     // center, start, end, space-between, space-around
     // flex-start is the default for justify-content
     // ------------------------------
     $name: 'layout-align';
-    @if $suffix !=null {
+    @if $suffix != null {
         $name: 'layout-align-#{$suffix}';
     }
 
@@ -1466,38 +1226,38 @@ $layout-breakpoint-lg: 1920px !default;
     }
 
     // Main Axis Center
-    .#{$name}-center, //stretch
-	.#{$name}-center-start,
-	.#{$name}-center-center,
-	.#{$name}-center-end,
-	.#{$name}-center-stretch {
+    .#{$name}-center,
+    .#{$name}-center-start,
+    .#{$name}-center-center,
+    .#{$name}-center-end,
+    .#{$name}-center-stretch {
         justify-content: center;
     }
 
     // Main Axis End
-    .#{$name}-end, //stretch
-	.#{$name}-end-start,
-	.#{$name}-end-center,
-	.#{$name}-end-end,
-	.#{$name}-end-stretch {
+    .#{$name}-end,
+    .#{$name}-end-start,
+    .#{$name}-end-center,
+    .#{$name}-end-end,
+    .#{$name}-end-stretch {
         justify-content: flex-end;
     }
 
     // Main Axis Space Around
-    .#{$name}-space-around, //stretch
-	.#{$name}-space-around-center,
-	.#{$name}-space-around-start,
-	.#{$name}-space-around-end,
-	.#{$name}-space-around-stretch {
+    .#{$name}-space-around,
+    .#{$name}-space-around-center,
+    .#{$name}-space-around-start,
+    .#{$name}-space-around-end,
+    .#{$name}-space-around-stretch {
         justify-content: space-around;
     }
 
     // Main Axis Space Between
-    .#{$name}-space-between, //stretch
-	.#{$name}-space-between-center,
-	.#{$name}-space-between-start,
-	.#{$name}-space-between-end,
-	.#{$name}-space-between-stretch {
+    .#{$name}-space-between,
+    .#{$name}-space-between-center,
+    .#{$name}-space-between-start,
+    .#{$name}-space-between-end,
+    .#{$name}-space-between-stretch {
         justify-content: space-between;
     }
 
@@ -1514,6 +1274,7 @@ $layout-breakpoint-lg: 1920px !default;
         align-items: flex-start;
         align-content: flex-start;
     }
+
     // Cross Axis Center
     .#{$name}-start-center,
     .#{$name}-center-center,
@@ -1524,6 +1285,7 @@ $layout-breakpoint-lg: 1920px !default;
         align-content: center;
         max-width: 100%;
     }
+
     // Cross Axis Center IE overflow fix
     .#{$name}-start-center > *,
     .#{$name}-center-center > *,
@@ -1533,6 +1295,7 @@ $layout-breakpoint-lg: 1920px !default;
         max-width: 100%;
         box-sizing: border-box;
     }
+
     // Cross Axis End
     .#{$name}-start-end,
     .#{$name}-center-end,
@@ -1542,6 +1305,7 @@ $layout-breakpoint-lg: 1920px !default;
         align-items: flex-end;
         align-content: flex-end;
     }
+
     // Cross Axis Start
     .#{$name}-start-stretch,
     .#{$name}-center-stretch,
@@ -1553,23 +1317,26 @@ $layout-breakpoint-lg: 1920px !default;
     }
 }
 
-@mixin layout-padding-margin() {
+/// @access private
+@mixin _layout-padding-margin {
     // NOTE: these`> *` selectors should only be applied for layout="row" or layout="column" children !!
     .layout-padding-sm > *,
     .layout-padding > .flex-sm {
         padding: $layout-gutter-width / 4;
     }
+
     .layout-padding,
-	.layout-padding-gt-sm,
-	.layout-padding-md, // NOTE: these`> *` selectors should only be applied for layout="row" or layout="column" children !!
-	.layout-padding>*,
-	.layout-padding-gt-sm>*,
-	.layout-padding-md>*,
-	.layout-padding>.flex,
-	.layout-padding>.flex-gt-sm,
-	.layout-padding>.flex-md {
+    .layout-padding-gt-sm,
+    .layout-padding-md, // NOTE: these`> *` selectors should only be applied for layout="row" or layout="column" children !!
+    .layout-padding>*,
+    .layout-padding-gt-sm>*,
+    .layout-padding-md>*,
+    .layout-padding>.flex,
+    .layout-padding>.flex-gt-sm,
+    .layout-padding>.flex-md {
         padding: $layout-gutter-width / 2;
     }
+
     // NOTE: these`> *` selectors should only be applied for layout="row" or layout="column" children !!
     .layout-padding-gt-md > *,
     .layout-padding-lg > *,
@@ -1580,22 +1347,25 @@ $layout-breakpoint-lg: 1920px !default;
     .layout-padding > .flex-gt-lg {
         padding: $layout-gutter-width / 1;
     }
+
     // Margin enhancements
     .layout-margin-sm > *,
     .layout-margin > .flex-sm {
         margin: $layout-gutter-width / 4;
     }
+
     .layout-margin,
-	.layout-margin-gt-sm,
-	.layout-margin-md, // NOTE: these`> *` selectors should only be applied for layout="row" or layout="column" children !!
-	.layout-margin>*,
-	.layout-margin-gt-sm>*,
-	.layout-margin-md>*,
-	.layout-margin>.flex,
-	.layout-margin>.flex-gt-sm,
-	.layout-margin>.flex-md {
+    .layout-margin-gt-sm,
+    .layout-margin-md, // NOTE: these`> *` selectors should only be applied for layout="row" or layout="column" children !!
+    .layout-margin>*,
+    .layout-margin-gt-sm>*,
+    .layout-margin-md>*,
+    .layout-margin>.flex,
+    .layout-margin>.flex-gt-sm,
+    .layout-margin>.flex-md {
         margin: $layout-gutter-width / 2;
     }
+
     // NOTE: these`> *` selectors should only be applied for layout="row" or layout="column" children !!
     .layout-margin-gt-md > *,
     .layout-margin-lg > *,
@@ -1605,12 +1375,15 @@ $layout-breakpoint-lg: 1920px !default;
     .layout-margin > .flex-gt-lg {
         margin: $layout-gutter-width / 1;
     }
+
     .layout-wrap {
         flex-wrap: wrap;
     }
+
     .layout-nowrap {
         flex-wrap: nowrap;
     }
+
     .layout-fill {
         margin: 0;
         width: 100%;
@@ -1619,17 +1392,20 @@ $layout-breakpoint-lg: 1920px !default;
     }
 }
 
-@mixin layouts-for-breakpoint($name: null) {
-    @include flex-order-for-name($name);
-    @include offset-for-name($name);
-    @include layout-align-for-name($name);
-    @include flex-properties-for-name($name);
-    @include layout-for-name($name);
+/// @access private
+@mixin _layouts-for-breakpoint($name: null) {
+    @include _flex-order-for-name($name);
+    @include _offset-for-name($name);
+    @include _layout-align-for-name($name);
+    @include _flex-properties-for-name($name);
+    @include _layout-for-name($name);
 }
 
 //#endregion
 
-@mixin flex-style() {
+/// @access public
+/// @group Layout
+@mixin flex-layout {
     @-moz-document url-prefix() {
         .layout-fill {
             margin: 0;
@@ -1639,8 +1415,8 @@ $layout-breakpoint-lg: 1920px !default;
         }
     }
 
-    @include layouts-for-breakpoint();
-    @include layout-padding-margin();
+    @include _layouts-for-breakpoint;
+    @include _layout-padding-margin;
 
     @media (max-width: $layout-breakpoint-xs - 1) {
         // Xtra-SMALL SCREEN
@@ -1650,12 +1426,12 @@ $layout-breakpoint-lg: 1920px !default;
                 display: none;
             }
         }
-        @include layouts-for-breakpoint(xs);
+        @include _layouts-for-breakpoint(xs);
     }
 
     @media (min-width: $layout-breakpoint-xs) {
         // BIGGER THAN Xtra-SMALL SCREEN
-        @include layouts-for-breakpoint(gt-xs);
+        @include _layouts-for-breakpoint(gt-xs);
     }
 
     @media (min-width: $layout-breakpoint-xs) and (max-width: $layout-breakpoint-sm - 1) {
@@ -1669,12 +1445,12 @@ $layout-breakpoint-lg: 1920px !default;
         .hide-sm:not(.show-gt-xs):not(.show-sm):not(.show) {
             display: none;
         }
-        @include layouts-for-breakpoint(sm);
+        @include _layouts-for-breakpoint(sm);
     }
 
     @media (min-width: $layout-breakpoint-sm) {
         // BIGGER THAN SMALL SCREEN
-        @include layouts-for-breakpoint(gt-sm);
+        @include _layouts-for-breakpoint(gt-sm);
     }
 
     @media (min-width: $layout-breakpoint-sm) and (max-width: $layout-breakpoint-md - 1) {
@@ -1690,12 +1466,12 @@ $layout-breakpoint-lg: 1920px !default;
         .hide-md:not(.show-md):not(.show-gt-sm):not(.show-gt-xs):not(.show) {
             display: none;
         }
-        @include layouts-for-breakpoint(md);
+        @include _layouts-for-breakpoint(md);
     }
 
     @media (min-width: $layout-breakpoint-md) {
         // BIGGER THAN MEDIUM SCREEN
-        @include layouts-for-breakpoint(gt-md);
+        @include _layouts-for-breakpoint(gt-md);
     }
 
     @media (min-width: $layout-breakpoint-md) and (max-width: $layout-breakpoint-lg - 1) {
@@ -1712,12 +1488,13 @@ $layout-breakpoint-lg: 1920px !default;
         .hide-lg:not(.show-lg):not(.show-gt-md):not(.show-gt-sm):not(.show-gt-xs):not(.show) {
             display: none;
         }
-        @include layouts-for-breakpoint(lg);
+        @include _layouts-for-breakpoint(lg);
     }
 
     @media (min-width: $layout-breakpoint-lg) {
-        @include layouts-for-breakpoint(gt-lg);
-        @include layouts-for-breakpoint(xl);
+        @include _layouts-for-breakpoint(gt-lg);
+        @include _layouts-for-breakpoint(xl);
+
         // BIGGER THAN LARGE SCREEN
         .hide,
         .hide-gt-xs,
@@ -1741,10 +1518,381 @@ $layout-breakpoint-lg: 1920px !default;
     }
 }
 
+// @see https://gist.github.com/gisu/04e7ff0aed986c2c1f18c934cc9e8382#file-_cssgrid-scss
+
+// ===================================================
+// CSS Grid Layout Helper
+//
+// To convert some of the CSS Grid Spec 2 features to Spec 1
+//
+// Author: Sascha Fuchs
+//
+// ===================================================
+
+/// Add Gap between the boxes
+///
+/// @group core - cssgrid
+///
+/// @param   {list}    $boxes - List with box sizes
+/// @param   {string}  $gap - Optional column gap
+@function box-gap($boxes, $gap) {
+    $box: ();
+
+    @for $i from 1 through length($boxes) {
+        $box: append($box, nth($boxes, $i), space);
+
+        // Adding Gap Between
+        @if $gap > 0 {
+            // Not last Loop
+            @if $i != length($boxes) {
+                $box: append($box, $gap, space);
+            }
+        }
+    }
+
+    @return $box;
+}
+
+/// To build Grid Template Columns with optional gap
+///
+/// @group core - cssgrid
+///
+/// @param   {string}  $gap - Optional column gap
+/// @param   {list}    $columns - Columns sizes
+///
+/// @require {function} box-gap
+///
+/// @example scss - scss
+///   .test {
+///     @include grid-columns(10px, 250px 1fr 50px 100px);
+///   }
+@mixin grid-columns($gap, $columns) {
+    grid-template-columns: $columns;
+    @if $gap > 0 {
+        grid-column-gap: $gap;
+    }
+
+    -ms-grid-columns: box-gap($columns, $gap);
+}
+
+/// To build Grid Template Rows with optional gap
+///
+/// @group core - cssgrid
+///
+/// @param   {string}  $gap - Optional row gap
+/// @param   {list}    $rows - Rows sizes
+///
+/// @require {function} box-gap
+///
+/// @example scss - scss
+///   .test {
+///     @include grid-rows(10px, 1fr);
+///   }
+@mixin grid-rows($gap, $rows) {
+    grid-template-rows: $rows;
+    @if $gap > 0 {
+        grid-row-gap: $gap;
+    }
+
+    -ms-grid-rows: box-gap($rows, $gap);
+}
+
+/// Generate a Grid Template Area from a Grid Map
+///
+/// @group core - cssgrid
+///
+/// @param   {string}  $area - Name of the Area
+/// @param   {map}     $map - Map of your grid area matrix
+///
+/// @example scss - scss
+///    $gridAreaMap: (
+///      row1: ('logo', 'nav', 'nav', 'nav'),
+///      row2: ('logo', 'empty', 'search', 'search')
+///    );
+///    @include grid-matrix($gridAreaMap);
+@mixin grid-matrix($map) {
+    $matrix: ();
+
+    @each $index, $row in $map {
+        $list: null;
+
+        @for $i from 1 through length($row) {
+            $list: append($list, unquote(nth(($row), $i)), space);
+        }
+
+        $matrix: append($matrix, quote($list), space);
+    }
+
+    grid-template-areas: $matrix;
+}
+
+/// Generate Coordinates based on Grid Matrix and the selected area
+///
+/// @group core - cssgrid
+///
+/// @param   {string}  $area - Name of the Area
+/// @param   {map}     $map - Map of your grid area matrix
+/// @param   {bool}    $columnGap - If you use Gap for Columns
+/// @param   {bool}    $rowGap - If you use Gap for Rows
+///
+/// @example scss - scss
+///    $gridAreaMap: (
+///      row1: ('logo', 'nav', 'nav', 'nav'),
+///      row2: ('logo', 'empty', 'search', 'search')
+///    );
+///    @include grid-area(logo, $gridAreaMap, true);
+@mixin grid-area($area, $map, $columnGap: false, $rowGap: false) {
+    // Init Vars
+    $gridColumnStart: '';
+    $gridColumnEnd: '';
+    $gridRows: ();
+    $gridRowHeight: '';
+    $areaExists: 0;
+
+    // Output regular Area
+    grid-area: $area;
+
+    // Generate Old Spec Coordinates based on Area
+
+    // Get Width element
+    @for $i from 1 through length($map) {
+        @if sl-contain(map-get($map, row#{$i}), $area) {
+            $areaExists: append($areaExists, 1);
+            $gridRowHeight: append($gridRowHeight, $i);
+            $gridColumnStart: index(map-get($map, row#{$i}), $area);
+            $gridColumnEnd: sl-last-index(map-get($map, row#{$i}), $area);
+            $gridRows: append($gridRows, $i);
+        }
+    }
+
+    // If Area exists in the Map
+    @if length($areaExists) > 1 {
+        // Convert Coordinate if Column Gap is active
+        @if $columnGap {
+            -ms-grid-column: $gridColumnStart + ($gridColumnStart - 1);
+            -ms-grid-column-span: $gridColumnEnd - $gridColumnStart + 1 + ($gridColumnEnd - $gridColumnStart);
+        } @else {
+            -ms-grid-column: $gridColumnStart;
+            -ms-grid-column-span: $gridColumnEnd - $gridColumnStart + 1;
+        }
+
+        // Add Row Coordinates
+        @if $rowGap {
+            -ms-grid-row: nth($gridRows, 1) + (nth($gridRows, 1) - 1);
+            -ms-grid-row-span: length($gridRowHeight) - 1 + (length($gridRowHeight) - 2);
+        } @else {
+            -ms-grid-row: nth($gridRows, 1);
+            -ms-grid-row-span: length($gridRowHeight) - 1;
+        }
+    }
+}
+
+// new stuff ---------------------
+/// @access private
+@mixin _grid-layout-align-for-name {
+    $name: 'layout-align';
+
+    .#{$name},
+    .#{$name}-start-stretch {
+        justify-content: flex-start;
+        align-content: stretch;
+        align-items: stretch;
+    }
+
+    .#{$name}-start,
+    .#{$name}-start-start,
+    .#{$name}-start-center,
+    .#{$name}-start-end,
+    .#{$name}-start-stretch {
+        justify-content: flex-start;
+    }
+
+    .#{$name}-center,
+    .#{$name}-center-start,
+    .#{$name}-center-center,
+    .#{$name}-center-end,
+    .#{$name}-center-stretch {
+        justify-content: center;
+    }
+
+    .#{$name}-end,
+    .#{$name}-end-start,
+    .#{$name}-end-center,
+    .#{$name}-end-end,
+    .#{$name}-end-stretch {
+        justify-content: flex-end;
+    }
+
+    .#{$name}-space-around,
+    .#{$name}-space-around-center,
+    .#{$name}-space-around-start,
+    .#{$name}-space-around-end,
+    .#{$name}-space-around-stretch {
+        justify-content: space-around;
+    }
+
+    .#{$name}-space-between,
+    .#{$name}-space-between-center,
+    .#{$name}-space-between-start,
+    .#{$name}-space-between-end,
+    .#{$name}-space-between-stretch {
+        justify-content: space-between;
+    }
+
+    .#{$name}-start-start,
+    .#{$name}-center-start,
+    .#{$name}-end-start,
+    .#{$name}-space-between-start,
+    .#{$name}-space-around-start {
+        align-items: flex-start;
+        align-content: flex-start;
+    }
+
+    .#{$name}-start-center,
+    .#{$name}-center-center,
+    .#{$name}-end-center,
+    .#{$name}-space-between-center,
+    .#{$name}-space-around-center {
+        align-items: center;
+        align-content: center;
+        max-width: 100%;
+    }
+
+    .#{$name}-start-center > *,
+    .#{$name}-center-center > *,
+    .#{$name}-end-center > *,
+    .#{$name}-space-between-center > *,
+    .#{$name}-space-around-center > * {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .#{$name}-start-end,
+    .#{$name}-center-end,
+    .#{$name}-end-end,
+    .#{$name}-space-between-end,
+    .#{$name}-space-around-end {
+        align-items: flex-end;
+        align-content: flex-end;
+    }
+
+    .#{$name}-start-stretch,
+    .#{$name}-center-stretch,
+    .#{$name}-end-stretch,
+    .#{$name}-space-between-stretch,
+    .#{$name}-space-around-stretch {
+        align-items: stretch;
+        align-content: stretch;
+    }
+}
+
 /// @access public
 /// @group Layout
-///
-@mixin font-size-style {
+@mixin grid-layout {
+    $gird-column-count: 8;
+    $grid-column-gap: 16;
+
+    .grid {
+        @include _grid-layout-align-for-name;
+
+        &.column-gap {
+            grid-column-gap: $grid-column-gap;
+        }
+
+        @for $column from 0 to $gird-column-count {
+            grid-template-columns: 40px 50px auto 50px 40px;
+        }
+
+        &.column-definitions {
+            grid-template-columns: 40px 50px auto 50px 40px;
+        }
+
+        &.row-definitions {
+            grid-template-rows: 25% 100px auto;
+        }
+    }
+}
+
+/// @access public
+/// @group Layout
+@mixin print-layout {
+    @media print {
+        html,
+        body {
+            min-height: 100vh;
+            min-width: 100vw;
+            margin: 0;
+            display: block;
+        }
+
+        * {
+            background: transparent !important;
+            background-color: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+            -webkit-print-color-adjust: exact;
+        }
+    }
+
+    .no-print {
+        @media print {
+            display: none !important;
+        }
+    }
+}
+
+/// Generate util classes for `border-radius` property.
+/// @access public
+/// @group Util
+@mixin border-utils {
+    .no-border,
+    .no-b {
+        border: none;
+    }
+
+    .no-border-radius,
+    .no-br {
+        border-radius: 0;
+    }
+
+    @for $i from 1 through 12 {
+        .border-radius-#{$i * 1},
+        .br-#{$i * 1} {
+            border-radius: #{$i * 1 + 'px'};
+        }
+    }
+}
+
+/// Generate util classes for `cursor` property.
+/// @access public
+/// @group Util
+@mixin cursor-utils {
+    @each $cursor in ('alias' 'all-scroll' 'auto' 'cell' 'context-menu' 'col-resize' 'copy' 'crosshair' 'default' 'e-resize' 'ew-resize' 'grab' 'grabbing' 'help' 'move' 'n-resize' 'ne-resize' 'nesw-resize' 'ns-resize' 'nw-resize' 'nwse-resize' 'no-drop' 'none' 'not-allowed' 'pointer' 'progress' 'row-resize' 's-resize' 'se-resize' 'sw-resize' 'text' 'vertical-text' 'w-resize' 'wait' 'zoom-in' 'zoom-out' 'initial' 'inherit') {
+        .cursor-#{$cursor},
+        .cur-#{$cursor} {
+            cursor: #{$cursor};
+        }
+    }
+}
+
+/// Generate util classes for `display` property.
+
+/// @access public
+/// @group Util
+@mixin display-utils {
+    @each $display in ('block' 'flex' 'inline-block' 'inline' 'none' 'table') {
+        .display-#{$display},
+        .dis-#{$display} {
+            display: #{$display};
+        }
+    }
+}
+
+/// Generate util classes for `font-size` property.
+/// @access public
+/// @group Util
+@mixin font-size-utils {
     @for $size from 1 through 60 {
         .font-size-#{$size * 2},
         .fs-#{$size * 2} {
@@ -1760,10 +1908,10 @@ $layout-breakpoint-lg: 1920px !default;
     }
 }
 
+/// Generate util classes for `font-weight` property.
 /// @access public
-/// @group Layout
-///
-@mixin font-weight-style {
+/// @group Util
+@mixin font-weight-utils {
     @for $weight from 1 through 9 {
         .font-weight-#{$weight * 100},
         .fw-#{$weight * 100} {
@@ -1772,10 +1920,10 @@ $layout-breakpoint-lg: 1920px !default;
     }
 }
 
+/// Generate util classes for `height` property.
 /// @access public
-/// @group Layout
-///
-@mixin height-style {
+/// @group Util
+@mixin height-utils {
     @for $height from 1 through 10 {
         .height-#{$height * 10},
         .h-#{$height * 10} {
@@ -1806,10 +1954,10 @@ $layout-breakpoint-lg: 1920px !default;
     }
 }
 
+/// Generate util classes for `line-height` property.
 /// @access public
-/// @group Layout
-///
-@mixin line-height-style {
+/// @group Util
+@mixin line-height-utils {
     @for $line-height from 1 through 60 {
         .line-height-#{$line-height * 2},
         .lh-#{$line-height * 2} {
@@ -1837,10 +1985,10 @@ $margin-properties-map: (
 
 //#endregion
 
+/// Generate util classes for `margin` property.
 /// @access public
-/// @group Layout
-///
-@mixin margin-style {
+/// @group Util
+@mixin margin-utils {
     .no-margin-vertical,
     .no-mv {
         margin-top: 0;
@@ -1923,10 +2071,10 @@ $margin-properties-map: (
     }
 }
 
+/// Generate util classes for `object-fit` property.
 /// @access public
-/// @group Layout
-///
-@mixin object-fit-style {
+/// @group Util
+@mixin object-fit-utils {
     @each $fit in ('fill' 'contain' 'cover' 'none' 'scale-down') {
         .object-fit-#{$fit},
         .of-#{$fit} {
@@ -1935,10 +2083,10 @@ $margin-properties-map: (
     }
 }
 
+/// Generate util classes for `opacity` property.
 /// @access public
-/// @group Layout
-///
-@mixin opacity-style {
+/// @group Util
+@mixin opacity-utils {
     @for $opacity from 1 through 10 {
         .opacity-#{$opacity * 10},
         .o-#{$opacity * 10} {
@@ -1957,10 +2105,19 @@ $margin-properties-map: (
     }
 }
 
+/// Generate util classes for `outline` property.
 /// @access public
-/// @group Layout
-///
-@mixin overflow-style {
+/// @group Util
+@mixin outline-utils {
+    .no-outline {
+        outline: none;
+    }
+}
+
+/// Generate util classes for `overflow` property.
+/// @access public
+/// @group Util
+@mixin overflow-utils {
     @each $coordinate in ('' '-x' '-y') {
         @each $overflow in ('visible' 'hidden' 'scroll' 'auto' 'initial' 'inherit') {
             .overflow#{$coordinate}-#{$overflow},
@@ -1993,10 +2150,10 @@ $padding-properties-map: (
 
 //#endregion
 
+/// Generate util classes for `padding` property.
 /// @access public
-/// @group Layout
-///
-@mixin padding-style {
+/// @group Util
+@mixin padding-utils {
     .no-padding-vertical,
     .no-pv {
         padding-top: 0;
@@ -2080,49 +2237,37 @@ $padding-properties-map: (
     }
 }
 
+/// Generate util classes for `position` property.
 /// @access public
-/// @group Layout
-///
-@mixin position-style {
+/// @group Util
+@mixin position-utils {
     @each $position in ('absolute' 'fixed' 'inherit' 'initial' 'marker' 'page' 'relative' 'revert' 'static' 'center' 'sticky' 'unset') {
         .position-#{$position},
         .pos-#{$position} {
             position: #{$position};
         }
     }
+
+    .no-top {
+        top: 0;
+    }
+
+    .no-bottom {
+        bottom: 0;
+    }
+
+    .no-left {
+        left: 0;
+    }
+
+    .no-right {
+        right: 0;
+    }
 }
 
 /// @access public
-/// @group Layout
-///
-@mixin print-style {
-    @media print {
-        html,
-        body {
-            min-height: 100vh;
-            min-width: 100vw;
-            margin: 0;
-            display: block;
-        }
-
-        * {
-            background: transparent !important;
-            background-color: transparent !important;
-            color: #000 !important;
-            box-shadow: none !important;
-            text-shadow: none !important;
-            -webkit-print-color-adjust: exact;
-        }
-    }
-
-    .no-print {
-        @media print {
-            display: none !important;
-        }
-    }
-}
-
-@mixin reset-style() {
+/// @group Util
+@mixin reset-utils {
     html,
     body,
     div,
@@ -2260,7 +2405,9 @@ $padding-properties-map: (
     }
 }
 
-@mixin sanitize-style() {
+/// @access public
+/// @group Util
+@mixin sanitize-utils {
     *,
     ::before,
     ::after {
@@ -2556,33 +2703,20 @@ $padding-properties-map: (
     }
 }
 
-//#region Variables
-
-$box-shadow-list: ($box-shadow-1dp $box-shadow-2dp $box-shadow-3dp $box-shadow-4dp $box-shadow-5dp $box-shadow-6dp $box-shadow-7dp $box-shadow-8dp $box-shadow-9dp $box-shadow-10dp $box-shadow-11dp $box-shadow-12dp $box-shadow-13dp $box-shadow-14dp $box-shadow-15dp $box-shadow-16dp $box-shadow-17dp $box-shadow-18dp $box-shadow-19dp $box-shadow-20dp $box-shadow-21dp $box-shadow-22dp $box-shadow-23dp $box-shadow-24dp);
-
-//#endregion
-
+/// Generate util classes for `user-select` property.
 /// @access public
-/// @group Layout
-///
-@mixin box-shadow-style {
-    .no-box-shadow,
-    .no-bs {
-        box-shadow: none;
-    }
-
-    @each $box-shadow in $box-shadow-list {
-        .box-shadow-#{index($box-shadow-list, $box-shadow)}dp,
-        .bs-#{index($box-shadow-list, $box-shadow)}dp {
-            box-shadow: $box-shadow;
-        }
+/// @group Util
+@mixin select-utils {
+    .no-select {
+        @include prefixed-properties(('khtml' 'moz' 'ms' 'webkit'), user-select, none, true);
+        @include prefixed-properties(('webkit'), touch-callout, none, false);
     }
 }
 
+/// Generate util classes for `height` and `width` property.
 /// @access public
-/// @group Layout
-///
-@mixin size-style {
+/// @group Util
+@mixin size-utils {
     @for $size from 1 through 10 {
         .size-#{$size * 10},
         .s-#{$size * 10} {
@@ -2597,10 +2731,10 @@ $box-shadow-list: ($box-shadow-1dp $box-shadow-2dp $box-shadow-3dp $box-shadow-4
     }
 }
 
+/// Generate util classes for `text-align` property.
 /// @access public
-/// @group Layout
-///
-@mixin text-align-style {
+/// @group Util
+@mixin text-align-utils {
     @each $text-align in ('justify' 'left' 'right' 'center') {
         .text-align-#{$text-align},
         .ta-#{$text-align} {
@@ -2609,10 +2743,10 @@ $box-shadow-list: ($box-shadow-1dp $box-shadow-2dp $box-shadow-3dp $box-shadow-4
     }
 }
 
+/// Generate util classes for `text-transform` property.
 /// @access public
-/// @group Layout
-///
-@mixin text-transform-style {
+/// @group Util
+@mixin text-transform-utils {
     @each $text-transform in ('none' 'capitalize' 'uppercase' 'lowercase' 'initial' 'inherit') {
         .text-transform-#{$text-transform},
         .tt-#{$text-transform} {
@@ -2624,161 +2758,161 @@ $box-shadow-list: ($box-shadow-1dp $box-shadow-2dp $box-shadow-3dp $box-shadow-4
 // @todo
 // @see https://github.com/angular/components/blob/master/src/material/core/typography/
 
-$mdc-typography-font-family: unquote('Roboto, sans-serif') !default;
+// $mdc-typography-font-family: unquote('Roboto, sans-serif') !default;
 
-$mdc-typography-base: (
-    font-family: $mdc-typography-font-family,
-    -moz-osx-font-smoothing: grayscale,
-    -webkit-font-smoothing: antialiased
-) !default;
+// $mdc-typography-base: (
+//     font-family: $mdc-typography-font-family,
+//     -moz-osx-font-smoothing: grayscale,
+//     -webkit-font-smoothing: antialiased
+// ) !default;
 
-$mdc-typography-font-weight-values: (
-    thin: 100,
-    light: 300,
-    regular: 400,
-    medium: 500,
-    bold: 700,
-    black: 900
-) !default;
+// $mdc-typography-font-weight-values: (
+//     thin: 100,
+//     light: 300,
+//     regular: 400,
+//     medium: 500,
+//     bold: 700,
+//     black: 900
+// ) !default;
 
-$mdc-typography-styles: mdc-typography-set-styles_(
-    $mdc-typography-base,
-    (
-        headline1: (
-            font-size: 6rem,
-            // 96sp
-                line-height: 6rem,
-            font-weight: map-get($mdc-typography-font-weight-values, light),
-            letter-spacing: mdc-typography-get-letter-spacing_(-1.5, 6),
-            text-decoration: inherit,
-            text-transform: inherit
-        ),
-        headline2: (
-            font-size: 3.75rem,
-            // 60sp
-                line-height: 3.75rem,
-            font-weight: map-get($mdc-typography-font-weight-values, light),
-            letter-spacing: mdc-typography-get-letter-spacing_(-0.5, 3.75),
-            text-decoration: inherit,
-            text-transform: inherit
-        ),
-        headline3: (
-            font-size: 3rem,
-            // 48sp
-                line-height: 3.125rem,
-            // 50sp
-                font-weight: map-get($mdc-typography-font-weight-values, regular),
-            letter-spacing: normal,
-            text-decoration: inherit,
-            text-transform: inherit
-        ),
-        headline4: (
-            font-size: 2.125rem,
-            // 34sp
-                line-height: 2.5rem,
-            // 40sp
-                font-weight: map-get($mdc-typography-font-weight-values, regular),
-            letter-spacing: mdc-typography-get-letter-spacing_(0.25, 2.125),
-            text-decoration: inherit,
-            text-transform: inherit
-        ),
-        headline5: (
-            font-size: 1.5rem,
-            // 24sp
-                line-height: 2rem,
-            // 32sp
-                font-weight: map-get($mdc-typography-font-weight-values, regular),
-            letter-spacing: normal,
-            text-decoration: inherit,
-            text-transform: inherit
-        ),
-        headline6: (
-            font-size: 1.25rem,
-            // 20sp
-                line-height: 2rem,
-            // 32sp
-                font-weight: map-get($mdc-typography-font-weight-values, medium),
-            letter-spacing: mdc-typography-get-letter-spacing_(0.25, 1.25),
-            text-decoration: inherit,
-            text-transform: inherit
-        ),
-        subtitle1: (
-            font-size: 1rem,
-            // 16sp
-                line-height: 1.75rem,
-            // 28sp
-                font-weight: map-get($mdc-typography-font-weight-values, regular),
-            letter-spacing: mdc-typography-get-letter-spacing_(0.15, 1),
-            text-decoration: inherit,
-            text-transform: inherit
-        ),
-        subtitle2: (
-            font-size: 0.875rem,
-            // 14sp
-                line-height: 1.375rem,
-            // 22sp
-                font-weight: map-get($mdc-typography-font-weight-values, medium),
-            letter-spacing: mdc-typography-get-letter-spacing_(0.1, 0.875),
-            text-decoration: inherit,
-            text-transform: inherit
-        ),
-        body1: (
-            font-size: 1rem,
-            // 16sp
-                line-height: 1.5rem,
-            // 24sp
-                font-weight: map-get($mdc-typography-font-weight-values, regular),
-            letter-spacing: mdc-typography-get-letter-spacing_(0.5, 1),
-            text-decoration: inherit,
-            text-transform: inherit
-        ),
-        body2: (
-            font-size: 0.875rem,
-            // 14sp
-                line-height: 1.25rem,
-            // 20sp
-                font-weight: map-get($mdc-typography-font-weight-values, regular),
-            letter-spacing: mdc-typography-get-letter-spacing_(0.25, 0.875),
-            text-decoration: inherit,
-            text-transform: inherit
-        ),
-        caption: (
-            font-size: 0.75rem,
-            // 12sp
-                line-height: 1.25rem,
-            // 20sp
-                font-weight: map-get($mdc-typography-font-weight-values, regular),
-            letter-spacing: mdc-typography-get-letter-spacing_(0.4, 0.75),
-            text-decoration: inherit,
-            text-transform: inherit
-        ),
-        button: (
-            font-size: 0.875rem,
-            // 14sp
-                line-height: 2.25rem,
-            // 36sp
-                font-weight: map-get($mdc-typography-font-weight-values, medium),
-            letter-spacing: mdc-typography-get-letter-spacing_(1.25, 0.875),
-            text-decoration: none,
-            text-transform: uppercase
-        ),
-        overline: (
-            font-size: 0.75rem,
-            // 12sp
-                line-height: 2rem,
-            // 32sp
-                font-weight: map-get($mdc-typography-font-weight-values, medium),
-            letter-spacing: mdc-typography-get-letter-spacing_(2, 0.75),
-            text-decoration: none,
-            text-transform: uppercase
-        )
-    )
-) !default;
+// $mdc-typography-styles: mdc-typography-set-styles_(
+//     $mdc-typography-base,
+//     (
+//         headline1: (
+//             font-size: 6rem,
+//             // 96sp
+//                 line-height: 6rem,
+//             font-weight: map-get($mdc-typography-font-weight-values, light),
+//             letter-spacing: mdc-typography-get-letter-spacing_(-1.5, 6),
+//             text-decoration: inherit,
+//             text-transform: inherit
+//         ),
+//         headline2: (
+//             font-size: 3.75rem,
+//             // 60sp
+//                 line-height: 3.75rem,
+//             font-weight: map-get($mdc-typography-font-weight-values, light),
+//             letter-spacing: mdc-typography-get-letter-spacing_(-0.5, 3.75),
+//             text-decoration: inherit,
+//             text-transform: inherit
+//         ),
+//         headline3: (
+//             font-size: 3rem,
+//             // 48sp
+//                 line-height: 3.125rem,
+//             // 50sp
+//                 font-weight: map-get($mdc-typography-font-weight-values, regular),
+//             letter-spacing: normal,
+//             text-decoration: inherit,
+//             text-transform: inherit
+//         ),
+//         headline4: (
+//             font-size: 2.125rem,
+//             // 34sp
+//                 line-height: 2.5rem,
+//             // 40sp
+//                 font-weight: map-get($mdc-typography-font-weight-values, regular),
+//             letter-spacing: mdc-typography-get-letter-spacing_(0.25, 2.125),
+//             text-decoration: inherit,
+//             text-transform: inherit
+//         ),
+//         headline5: (
+//             font-size: 1.5rem,
+//             // 24sp
+//                 line-height: 2rem,
+//             // 32sp
+//                 font-weight: map-get($mdc-typography-font-weight-values, regular),
+//             letter-spacing: normal,
+//             text-decoration: inherit,
+//             text-transform: inherit
+//         ),
+//         headline6: (
+//             font-size: 1.25rem,
+//             // 20sp
+//                 line-height: 2rem,
+//             // 32sp
+//                 font-weight: map-get($mdc-typography-font-weight-values, medium),
+//             letter-spacing: mdc-typography-get-letter-spacing_(0.25, 1.25),
+//             text-decoration: inherit,
+//             text-transform: inherit
+//         ),
+//         subtitle1: (
+//             font-size: 1rem,
+//             // 16sp
+//                 line-height: 1.75rem,
+//             // 28sp
+//                 font-weight: map-get($mdc-typography-font-weight-values, regular),
+//             letter-spacing: mdc-typography-get-letter-spacing_(0.15, 1),
+//             text-decoration: inherit,
+//             text-transform: inherit
+//         ),
+//         subtitle2: (
+//             font-size: 0.875rem,
+//             // 14sp
+//                 line-height: 1.375rem,
+//             // 22sp
+//                 font-weight: map-get($mdc-typography-font-weight-values, medium),
+//             letter-spacing: mdc-typography-get-letter-spacing_(0.1, 0.875),
+//             text-decoration: inherit,
+//             text-transform: inherit
+//         ),
+//         body1: (
+//             font-size: 1rem,
+//             // 16sp
+//                 line-height: 1.5rem,
+//             // 24sp
+//                 font-weight: map-get($mdc-typography-font-weight-values, regular),
+//             letter-spacing: mdc-typography-get-letter-spacing_(0.5, 1),
+//             text-decoration: inherit,
+//             text-transform: inherit
+//         ),
+//         body2: (
+//             font-size: 0.875rem,
+//             // 14sp
+//                 line-height: 1.25rem,
+//             // 20sp
+//                 font-weight: map-get($mdc-typography-font-weight-values, regular),
+//             letter-spacing: mdc-typography-get-letter-spacing_(0.25, 0.875),
+//             text-decoration: inherit,
+//             text-transform: inherit
+//         ),
+//         caption: (
+//             font-size: 0.75rem,
+//             // 12sp
+//                 line-height: 1.25rem,
+//             // 20sp
+//                 font-weight: map-get($mdc-typography-font-weight-values, regular),
+//             letter-spacing: mdc-typography-get-letter-spacing_(0.4, 0.75),
+//             text-decoration: inherit,
+//             text-transform: inherit
+//         ),
+//         button: (
+//             font-size: 0.875rem,
+//             // 14sp
+//                 line-height: 2.25rem,
+//             // 36sp
+//                 font-weight: map-get($mdc-typography-font-weight-values, medium),
+//             letter-spacing: mdc-typography-get-letter-spacing_(1.25, 0.875),
+//             text-decoration: none,
+//             text-transform: uppercase
+//         ),
+//         overline: (
+//             font-size: 0.75rem,
+//             // 12sp
+//                 line-height: 2rem,
+//             // 32sp
+//                 font-weight: map-get($mdc-typography-font-weight-values, medium),
+//             letter-spacing: mdc-typography-get-letter-spacing_(2, 0.75),
+//             text-decoration: none,
+//             text-transform: uppercase
+//         )
+//     )
+// ) !default;
 
+/// Generate util classes for `vertical-align` property.
 /// @access public
-/// @group Layout
-///
-@mixin vertical-align-style {
+/// @group Util
+@mixin vertical-align-utils {
     @each $vertical-align in ('baseline' 'bottom' 'inherit' 'initial' 'middle' 'sub' 'super' 'text-bottom' 'text-top' 'top') {
         .vertical-align-#{$vertical-align},
         .va-#{$vertical-align} {
@@ -2787,10 +2921,10 @@ $mdc-typography-styles: mdc-typography-set-styles_(
     }
 }
 
+/// Generate util classes for `width` property.
 /// @access public
-/// @group Layout
-///
-@mixin width-style {
+/// @group Util
+@mixin width-utils {
     @for $width from 1 through 10 {
         .width-#{$width * 10},
         .w-#{$width * 10} {

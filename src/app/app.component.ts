@@ -7,7 +7,7 @@ import { TableNormalizer } from "./Services/TableNormalizer";
 @Component({
   selector: "app",
   templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.css"]
+  styleUrls: ["./app.component.scss"]
 })
 export class AppComponent {
   @ViewChild(DataTableViewComponent, { static: true })

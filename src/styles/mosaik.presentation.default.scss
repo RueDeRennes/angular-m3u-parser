@@ -130,28 +130,6 @@ $default-theme-name: 'default';
     }
 }
 
-/// @access private
-/// @group Fonts
-/// @requires {function} empty
-///
-@mixin _font-style($font-url, $font-name, $font-fallback: '', $font-alias: '') {
-    @if not empty($font-url) {
-        @import url($font-url);
-    }
-
-    @if not empty($font-fallback) {
-        $font-name: append(quote($font-name), unquote(#{$font-fallback}), 'comma');
-    }
-
-    :root {
-        @if not empty($font-alias) {
-            #{'--#{$font-alias}-font-family'}: #{$font-name};
-        } @else {
-            #{'--font-family'}: #{$font-name};
-        }
-    }
-}
-
 //#endregion
 
 @mixin custom-colors-style {
@@ -301,7 +279,7 @@ $default-theme-name: 'default';
         'highlight': #292435,
         'middlelight': #2f283f,
         'lowlight': #2d273b,
-        'transparent': s rgba(0, 0, 0, 0),
+        'transparent': rgba(0, 0, 0, 0),
         'semi-transparent': rgba(51, 51, 51, 0.871),
         'disabled': #686868
     );
@@ -690,11 +668,11 @@ $default-theme-name: 'default';
         background-color: var(--lowlight-color);
         border-color: var(--lowlight-color);
         text-decoration: none;
-        box-shadow: $box-shadow-4dp;
+        box-shadow: var(--elevation-4dp);
     }
 
     &:active {
-        box-shadow: $box-shadow-2dp;
+        box-shadow: var(--elevation-2dp);
 
         &::before {
             background: currentColor;
@@ -921,6 +899,7 @@ $default-theme-name: 'default';
         @include _button-style-base;
 
         padding: 0;
+        text-transform: unset;
 
         &:hover,
         &:active,
@@ -1048,6 +1027,7 @@ $default-theme-name: 'default';
         line-height: 24px;
         min-height: 24px;
         font-size: $h4;
+        color: var(--foreground-color);
 
         &::after {
             @include transition(background-color, color, border-color, box-shadow, 0.3s);
@@ -1074,7 +1054,7 @@ $default-theme-name: 'default';
             &::after {
                 border: to-unit($thickness-factor, 'px') solid;
                 border-color: var(--highlight-color);
-                box-shadow: $box-shadow-4dp;
+                box-shadow: var(--elevation-4dp);
             }
         }
     }
@@ -1722,7 +1702,7 @@ $default-theme-name: 'default';
 /// @access private
 @mixin _input-style-base {
     @include transition(background-color, color, border-color, box-shadow, 0.3s);
-    background-color: var(--semi-transparent-color);
+    background-color: var(--background-color);
     border-radius: #{$radius-factor + 'px'};
     border-width: #{$thickness-factor + 'px'};
     border-style: solid;
@@ -1742,7 +1722,7 @@ $default-theme-name: 'default';
     &:active,
     &:focus {
         border-color: var(--secondary-color);
-        box-shadow: $box-shadow-4dp;
+        box-shadow: var(--elevation-4dp);
         background-color: var(--background-color);
     }
 
@@ -2031,7 +2011,7 @@ $default-theme-name: 'default';
     background-color: var(--highlight-color);
     border-radius: to-unit($radius-factor, 'px');
     border-style: none;
-    box-shadow: $box-shadow-1dp;
+    box-shadow: var(--elevation-1dp);
     color: var(--foreground-color);
     display: inline-block;
     font-size: $h6;
@@ -2669,7 +2649,7 @@ $default-theme-name: 'default';
             &::after {
                 border: to-unit($thickness-factor, 'px') solid;
                 border-color: var(--highlight-color);
-                box-shadow: $box-shadow-4dp;
+                box-shadow: var(--elevation-4dp);
             }
         }
     }
@@ -2910,7 +2890,7 @@ $default-theme-name: 'default';
     &:active,
     &:focus {
         border-color: var(--secondary-color);
-        box-shadow: $box-shadow-4dp;
+        box-shadow: var(--elevation-4dp);
     }
 
     &:disabled {
@@ -3082,14 +3062,14 @@ $default-theme-name: 'default';
     &:active,
     &:focus {
         @include _slider-style-thumb {
-            box-shadow: $box-shadow-4dp;
+            box-shadow: var(--elevation-4dp);
             transform: scale(1.25);
         }
     }
 
     &:active {
         @include _slider-style-thumb {
-            box-shadow: $box-shadow-2dp;
+            box-shadow: var(--elevation-2dp);
         }
     }
 
@@ -3423,12 +3403,10 @@ $default-theme-name: 'default';
     @include colorset-style {
         @include not('.disabled') {
             > thead {
-               
+                background-color: $_colorset-style-ctx;
 
                 > tr {
-                  
                     > th {
-                       background-color: $_colorset-style-ctx;
                         color: var(--contrast-color);
                     }
                 }
@@ -3489,7 +3467,7 @@ $default-theme-name: 'default';
     &:active,
     &:focus {
         border-color: var(--secondary-color);
-        box-shadow: $box-shadow-4dp;
+        box-shadow: var(--elevation-4dp);
     }
 
     &:disabled {
@@ -3848,7 +3826,144 @@ $default-theme-name: 'default';
     }
 }
 
+$shadow-umbra-opacity: 0.2 !default; // or this value? 0.26
+$shadow-penumbra-opacity: 0.14 !default; // or this value? 0.12
+$shadow-ambient-opacity: 0.12 !default; // or this value? 0.08
+
+/// Level 1 - Umbra Shadows
+/// @access private
+/// @group Elevation
+/// @param {Color} $color - The color used to generate umbra shadows.
+/// @returns {Map} Returns a map of 24 shadow elevations with the umbra color.
+@function _l1-shadows($color) {
+    @return (1: 0 1px 3px 0 $color, 2: 0 1px 5px 0 $color, 3: 0 1px 8px 0 $color, 4: 0 2px 4px -1px $color, 5: 0 3px 5px -1px $color, 6: 0 3px 5px -1px $color, 7: 0 4px 5px -2px $color, 8: 0 5px 5px -3px $color, 9: 0 5px 6px -3px $color, 10: 0 6px 6px -3px $color, 11: 0 6px 7px -4px $color, 12: 0 7px 8px -4px $color, 13: 0 7px 8px -4px $color, 14: 0 7px 9px -4px $color, 15: 0 8px 9px -5px $color, 16: 0 8px 10px -5px $color, 17: 0 8px 11px -5px $color, 18: 0 9px 11px -5px $color, 19: 0 9px 12px -6px $color, 20: 0 10px 13px -6px $color, 21: 0 10px 13px -6px $color, 22: 0 10px 14px -6px $color, 23: 0 11px 14px -7px $color, 24: 0 11px 15px -7px $color);
+}
+
+/// Level 2 - Penumbra Shadows
+/// @access private
+/// @group Elevation
+/// @param {Color} $color - The color used to generate penumbra shadows.
+/// @returns {Map} Returns a map of 24 shadow elevations with the penumbra color.
+@function _l2-shadows($color) {
+    @return (1: 0 1px 1px 0 $color, 2: 0 2px 2px 0 $color, 3: 0 3px 4px 0 $color, 4: 0 4px 5px 0 $color, 5: 0 5px 8px 0 $color, 6: 0 6px 10px 0 $color, 7: 0 7px 10px 1px $color, 8: 0 8px 10px 1px $color, 9: 0 9px 12px 1px $color, 10: 0 10px 14px 1px $color, 11: 0 11px 15px 1px $color, 12: 0 12px 17px 2px $color, 13: 0 13px 19px 2px $color, 14: 0 14px 21px 2px $color, 15: 0 15px 22px 2px $color, 16: 0 16px 24px 2px $color, 17: 0 17px 26px 2px $color, 18: 0 18px 28px 2px $color, 19: 0 19px 29px 2px $color, 20: 0 20px 31px 3px $color, 21: 0 21px 33px 3px $color, 22: 0 22px 35px 3px $color, 23: 0 23px 36px 3px $color, 24: 0 24px 38px 3px $color);
+}
+
+/// Level 3 - Ambient Shadows
+/// @access private
+/// @group Elevation
+/// @param {Color} $color - The color used to generate ambient shadows.
+/// @returns {Map} Returns a map of 24 shadow elevations with the ambient color.
+@function _l3-shadows($color) {
+    @return (1: 0 2px 1px -1px $color, 2: 0 3px 1px -2px $color, 3: 0 3px 3px -2px $color, 4: 0 1px 10px 0 $color, 5: 0 1px 14px 0 $color, 6: 0 1px 18px 0 $color, 7: 0 2px 16px 1px $color, 8: 0 3px 14px 2px $color, 9: 0 3px 16px 2px $color, 10: 0 4px 18px 3px $color, 11: 0 4px 20px 3px $color, 12: 0 5px 22px 4px $color, 13: 0 5px 24px 4px $color, 14: 0 5px 26px 4px $color, 15: 0 6px 28px 5px $color, 16: 0 6px 30px 5px $color, 17: 0 6px 32px 5px $color, 18: 0 7px 34px 6px $color, 19: 0 7px 36px 6px $color, 20: 0 8px 38px 7px $color, 21: 0 8px 40px 7px $color, 22: 0 8px 42px 7px $color, 23: 0 9px 44px 8px $color, 24: 0 9px 46px 8px $color);
+}
+
+/// Returns shadow based on elevation, umbra, penumbra, and ambient shadow colors.
+/// @access private
+/// @group Elevation
+/// @requires {function} _l1-shadows
+/// @requires {function} _l2-shadows
+/// @requires {function} _l3-shadows
+/// @param {number} $elevation - The elevation level to generate a shadow for.
+/// @param {Color} $l1-color - The umbra color.
+/// @param {Color} $l2-color - The penumbra color.
+/// @param {Color} $l3-color - The ambient color.
+/// @returns {String} - A string to be used as box-shadow value.
+@function _elevation($elevation, $l1-color, $l2-color, $l3-color) {
+    @return unquote(#{map-get(_l1-shadows($l1-color), $elevation), map-get(_l2-shadows($l2-color), $elevation), map-get(_l3-shadows($l3-color), $elevation)});
+}
+
+/// Returns an elevation from an elevations produced map.
+/// @access public
+/// @group Elevation
+/// @param {Map} $elevations - The elevations map to extract the elevation from.
+/// @param {number} $elevation - The elevation level from 1 to 24.
+/// @returns {String} Returns a box-shadow value.
+@function elevation($elevations, $elevation) {
+    @if type-of($elevation) != number or not unitless($elevation) {
+        @error '$elevation must be a number';
+    }
+
+    @if $elevation < 0 or $elevation > 24 {
+        @error '$elevation must be between 0 and 24';
+    }
+
+    @return map-get($elevations, #{$elevation});
+}
+
+/// Generates a map of 24 shadows.
+/// @access public
+/// @group Elevation
+/// @requires {function} _elevation
+/// @param {Color} $color-1 - The umbra shadow color.
+/// @param {Color} $color-2 - The penumbra shadow color.
+/// @param {Color} $color-3 - The ambient shadow color.
+@function elevations($color-1, $color-2, $color-3) {
+    $result: (
+        '0': none
+    );
+
+    @for $i from 1 through 24 {
+        $elevation: (#{$i}: _elevation($i, $color-1, $color-2, $color-3));
+        $result: map-merge($result, $elevation);
+    }
+
+    @return $result;
+}
+
+/// @access private
+/// @group Elevation
+/// @requires {function} elevations
+///
+@mixin _elevation-style($color-1: rgba(0, 0, 0, $shadow-umbra-opacity), $color-2: rgba(0, 0, 0, $shadow-penumbra-opacity), $color-3: rgba(0, 0, 0, $shadow-ambient-opacity)) {
+    $elevation-map: elevations($color-1, $color-2, $color-3);
+
+    :root {
+        @each $key, $value in $elevation-map {
+            #{'--elevation-#{$key}dp'}: #{$value};
+        }
+    }
+
+    @each $key, $value in $elevation-map {
+        .elevation-#{$key}dp,
+        .elev-#{$key}dp,
+        .box-shadow-#{$key}dp,
+        .bs-#{$key}dp {
+            box-shadow: $value;
+        }
+    }
+}
+
+/// @access public
+/// @group Elevation
+/// @requires {mixin} _elevation-style
+///
+@mixin default-elevation-style {
+    @include _elevation-style;
+}
+
 //#region Mixins
+
+/// @access private
+/// @group Fonts
+/// @requires {function} empty
+///
+@mixin _font-style($font-url, $font-name, $font-fallback: '', $font-alias: '') {
+    @if not empty($font-url) {
+        @import url($font-url);
+    }
+
+    @if not empty($font-fallback) {
+        $font-name: append(quote($font-name), unquote(#{$font-fallback}), 'comma');
+    }
+
+    :root {
+        @if not empty($font-alias) {
+            #{'--#{$font-alias}-font-family'}: #{$font-name};
+        } @else {
+            #{'--font-family'}: #{$font-name};
+        }
+    }
+}
 
 /// @access public
 /// @group Fonts
